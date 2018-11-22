@@ -8,7 +8,6 @@ canvas.height = canvas.getBoundingClientRect().height;
 
 const engine = new BABYLON.Engine(canvas, true);
 
-
 function createScene() {
     var scene = new Scene(engine);
 
@@ -25,6 +24,9 @@ function createScene() {
     // camera.attachControl(canvas, true);
 
     var sphere = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
+    sphere.position.x = 0;
+    sphere.position.y = 0;
+    sphere.position.z = 0;
     let box = sphere;
 
 // Parameters: name, position, scene
@@ -88,15 +90,15 @@ function createScene() {
     }
 
     var setColor = function(but) {
-    switch(but) {
-        case 0:
-            // box.material = blueMat;
-        break
-        case 1:
-            // box.material = redMat;
-        break
+        switch(but) {
+            case 0:
+                // box.material = blueMat;
+            break
+            case 1:
+                // box.material = redMat;
+            break
+        }
     }
-}
 
 // Change mesh
 var orientateY = function(angle) {
@@ -113,7 +115,7 @@ var displayValue = function(value) {
 }
 
 
-    transformGroup.addCheckbox("Small", toSize);
+transformGroup.addCheckbox("Small", toSize);
 transformGroup.addCheckbox("High", toPlace);
 
 colorGroup.addRadio("Blue", setColor, true);
@@ -122,11 +124,61 @@ colorGroup.addRadio("Red", setColor);
 rotateGroup.addSlider("Angle Y", orientateY, "degs", 0, 2 * Math.PI, 0, displayValue);
 rotateGroup.addSlider("Angle X", orientateX, "degs", 0, 2 * Math.PI, Math.PI, displayValue);
 
-    selectBox.addGroup(rotateGroup);
-    selectBox.addGroup(transformGroup);
-    selectBox.addGroup(colorGroup);
+selectBox.addGroup(rotateGroup);
+selectBox.addGroup(transformGroup);
+selectBox.addGroup(colorGroup);
 
-    return scene;
+// Return to base
+var withinRange = (x, min, max) => {
+    return x >= min && x <= max;
+}
+
+var spaceShip = MeshBuilder.CreateBox("spaceShip", { height: 5, width: 5, depth: 10 }, scene);
+spaceShip.position.x = 10;
+spaceShip.position.y = 10;
+spaceShip.position.x = 10;
+
+// Keyboard events
+var inputMap = {};
+scene.actionManager = new BABYLON.ActionManager(scene);
+scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (event) {
+    inputMap[event.sourceEvent.key] = event.sourceEvent.type == "keydown";
+}));
+scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {                             
+    inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
+}));
+
+// Game Loop
+scene.onBeforeRenderObservable.add(() => {
+    // TODO: remap to a switch to activate return to home base
+    if (inputMap["g"]) {
+        let move = setInterval (() => {
+            sphere.position.x < spaceShip.position.x ? sphere.position.x += 0.1 : sphere.position.x -= 0.1;
+            sphere.position.y < spaceShip.position.y ? sphere.position.y += 0.1 : sphere.position.y -= 0.1;
+            sphere.position.z < spaceShip.position.z ? sphere.position.z += 0.1 : sphere.position.z -= 0.1;
+            if (withinRange(sphere.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
+                withinRange(sphere.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
+                withinRange(sphere.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) {
+                clearInterval(move);
+            }
+        }, 20);
+    }
+    // move position of the space ship for testing
+    if (inputMap["w"]) {
+        sphere.position.y += 0.1;
+    }
+    if (inputMap["s"]) {
+        sphere.position.y -= 0.1;
+    }
+    if (inputMap["a"]) {
+        sphere.position.x -= 0.1;
+    }
+    if (inputMap["d"]) {
+        sphere.position.x += 0.1;
+    }
+});
+
+return scene;
 }
 
 var scene = createScene();
