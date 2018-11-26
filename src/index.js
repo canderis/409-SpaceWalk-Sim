@@ -2,6 +2,10 @@ import * as BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 import { Engine, Scene, ArcRotateCamera, HemisphericLight, MeshBuilder, Vector3 } from 'babylonjs';
 
+import HandControl from './assets/HandControl.svg';
+import Power from './assets/Power.png';
+
+
 const canvas = document.getElementById("canvas");
 canvas.width = canvas.getBoundingClientRect().width;
 canvas.height = canvas.getBoundingClientRect().height;
@@ -27,8 +31,8 @@ function createScene() {
     var sphere = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
     let box = sphere;
 
-// Parameters: name, position, scene
-    var camera = new BABYLON.FollowCamera("FollowCam", new BABYLON.Vector3(0, 10, -10), scene);
+    // Parameters: name, position, scene
+    var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 10, -10), scene);
 
     // The goal distance of camera from target
     camera.radius = 30;
@@ -55,76 +59,72 @@ function createScene() {
 
     var light1 = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
 
-    var advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
+    const handControl = new BABYLON.GUI.Image("hand-module", HandControl);
+    handControl.height = "300px";
+    handControl.width = "400px";
+    handControl.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    handControl.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    advancedTexture.addControl(handControl);    
 
-    var selectBox = new GUI.SelectionPanel("selectBox");
-    selectBox.width = 0.25;
-    selectBox.height = 0.52;
-    selectBox.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-    selectBox.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-
-    advancedTexture.addControl(selectBox);
-    //
-    var transformGroup = new BABYLON.GUI.CheckboxGroup("Transformation");
-    var colorGroup = new BABYLON.GUI.RadioGroup("Color");
-    var rotateGroup = new BABYLON.GUI.SliderGroup("Rotation");
-
-    var toSize = function(isChecked) {
-        if (isChecked) {
-            box.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+    const power = new GUI.Checkbox();
+    power.isChecked = false;
+    power.color = "red";
+    power.background = "red";
+    power.onIsCheckedChangedObservable.add(function(value) {
+        if (value) {
+            power.color = "green";
+            power.background = "green";
         }
-        else {
-            box.scaling = new BABYLON.Vector3(1, 1, 1);
+        else{
+            power.color = "red";
+            power.background = "red";
         }
-    }
+    });
 
-    var toPlace = function(isChecked) {
-        if (isChecked) {
-            box.position.y = 1.5;
-        }
-        else {
-            box.position.y = 0.5;
-        }
-    }
-
-    var setColor = function(but) {
-    switch(but) {
-        case 0:
-            // box.material = blueMat;
-        break
-        case 1:
-            // box.material = redMat;
-        break
-    }
-}
-
-// Change mesh
-var orientateY = function(angle) {
-    box.rotation.y = angle;
-}
-
-var orientateX = function(angle) {
-    box.rotation.x = angle;
-}
-
-//Format value
-var displayValue = function(value) {
-    return BABYLON.Tools.ToDegrees(value) | 0;
-}
+    power.left = "10px";
+    power.top = "-230px";
+    power.height = "20px";
+    power.width = "20px";
+    power.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    power.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    advancedTexture.addControl(power);
 
 
-    transformGroup.addCheckbox("Small", toSize);
-transformGroup.addCheckbox("High", toPlace);
+    var powerText = new BABYLON.GUI.TextBlock();
+    powerText.text = "Power On System";
+    // powerText.width = "180px";
+    powerText.left = "40px";
+    powerText.top = "-230px";
+    powerText.marginLeft = "5px";
 
-colorGroup.addRadio("Blue", setColor, true);
-colorGroup.addRadio("Red", setColor);
+    powerText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    powerText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    powerText.color = "black";
 
-rotateGroup.addSlider("Angle Y", orientateY, "degs", 0, 2 * Math.PI, 0, displayValue);
-rotateGroup.addSlider("Angle X", orientateX, "degs", 0, 2 * Math.PI, Math.PI, displayValue);
+    advancedTexture.addControl(powerText);
 
-    selectBox.addGroup(rotateGroup);
-    selectBox.addGroup(transformGroup);
-    selectBox.addGroup(colorGroup);
+    const slider = new BABYLON.GUI.Slider();
+    slider.minimum = 0.1;
+    slider.maximum = 20;
+    slider.value = 5;
+    slider.height = "20px";
+    slider.width = "150px";
+    slider.color = "#003399";
+    slider.background = "grey";
+    slider.left = "200px";
+    slider.top = "-230px";
+    slider.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    slider.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    slider.onValueChangedObservable.add(function (value) {
+        sphere.scaling = unitVec.scale(value);
+    });
+    advancedTexture.addControl(slider);
+
+
+    
+
+
 
     return scene;
 }
