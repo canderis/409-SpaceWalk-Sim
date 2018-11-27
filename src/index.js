@@ -8,11 +8,13 @@ import {
     HemisphericLight,
     MeshBuilder,
     Vector3,
+    Vector2,
     FlyCamera,
     StandardMaterial,
     Color3,
     CubeTexture,
-    Texture
+    Texture,
+    Matrix
 } from 'babylonjs';
 
 import HandControl from './assets/HandControl.svg';
@@ -41,7 +43,7 @@ const buildSkybox = (scene) => {
     skybox.material = skyboxMaterial;
 }
 
-const buildGUI = (scene, guiVars) => {
+const buildGUI = (scene, guiVars, camera, spaceShip) => {
     const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
     const handControl = new GUI.Image("hand-module", HandControl);
     handControl.height = "300px";
@@ -89,7 +91,8 @@ const buildGUI = (scene, guiVars) => {
     slider.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     slider.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     slider.onValueChangedObservable.add(function (value) {
-        sphere.scaling = unitVec.scale(value);
+        guiVars.acceleration = 0.0001 * value;
+        console.log(guiVars)
     });
     advancedTexture.addControl(slider);
 
@@ -293,8 +296,15 @@ const buildGUI = (scene, guiVars) => {
             joystick.deltaPosition = joystick.deltaPosition.scale(0);
             returnToHome.color = "green";
             returnToHome.background = "green";
+
+            // camera.upVector.normalize();
+
+            
+                    // camera.cameraRotation = new Vector2(guiVars.rotationTarget.x, guiVars.rotationTarget.y)
+
         }
         else{
+            guiVars.rotationTarget = new Vector3(0,0,0);
             returnToHome.color = "red";
             returnToHome.background = "red";
         }
@@ -315,6 +325,41 @@ const buildGUI = (scene, guiVars) => {
     return joystick;
 }
 
+// simplified face funtion
+const facePoint = (rotatingObject, pointToRotateTo) => {
+    // a directional vector from one object to the other one
+    var direction = pointToRotateTo.subtract(rotatingObject.position);
+    
+    
+    if (!rotatingObject.rotationQuaternion) {
+        rotatingObject.rotationQuaternion = BABYLON.Quaternion.Identity();
+    }
+    
+    direction.normalize();
+    
+    var mat = BABYLON.Matrix.Identity();
+    
+    var upVec = BABYLON.Vector3.Up();
+    
+    var xaxis = BABYLON.Vector3.Cross(direction, upVec);
+    var yaxis = BABYLON.Vector3.Cross(xaxis, direction);
+    
+    mat.m[0] = xaxis.x;
+    mat.m[1] = xaxis.y;
+    mat.m[2] = xaxis.z;
+    
+    mat.m[4] = direction.x;
+    mat.m[5] = direction.y;
+    mat.m[6] = direction.z;
+    
+    mat.m[8] = yaxis.x;
+    mat.m[9] = yaxis.y;
+    mat.m[10] = yaxis.z;
+    
+    BABYLON.Quaternion.FromRotationMatrixToRef(mat, rotatingObject.rotationQuaternion);
+}
+
+
 const createScene = () => {
     const scene = new Scene(engine);
     VirtualJoystick.canvas = canvas;
@@ -327,37 +372,93 @@ const createScene = () => {
     const camera = new FlyCamera("FlyCamera", new Vector3(0, 5, -10), scene);
     camera.noRotationConstraint = true;
     camera.updateUpVectorFromRotation = true;
+    camera.checkCollisions = true;
 
     const light1 = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
 
     const guiVars = {
         poweredOn: false,
         returnToHome: false,
+        acceleration: 0.0001,
+        rotationTarget: new Vector3(0,0,0)
     };
 
-    const joystick = buildGUI(scene, guiVars);
+    const joystick = buildGUI(scene, guiVars,camera, spaceShip);
     buildSkybox(scene);
+    let rotation = new Vector3(0.001, 0.002, 0.003);
+    let velocity = new Vector3(0.01, 0.02, 0.03);
 
     // Game Loop
     scene.onBeforeRenderObservable.add(() => {
         if(guiVars.poweredOn) {
+            velocity = velocity.add(camera.upVector.scale(guiVars.acceleration));
             if(!guiVars.returnToHome){
-                camera.cameraRotation = camera.cameraRotation.addVector3(joystick.deltaPosition.scale(0.003));
+                rotation = rotation.add(joystick.deltaPosition.scale(0.003));
             }
             else{
                 const withinRange = (x, min, max) => x >= min && x <= max;
-                let move = setInterval (() => {
+                velocity = new Vector3(0, 0 ,0);
+                if (withinRange(camera.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
+                    withinRange(camera.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
+                    withinRange(camera.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) {
+                    
+                    console.log('home');
+                }
+                else{
                     camera.position.x < spaceShip.position.x ? camera.position.x += 0.1 : camera.position.x -= 0.1;
                     camera.position.y < spaceShip.position.y ? camera.position.y += 0.1 : camera.position.y -= 0.1;
                     camera.position.z < spaceShip.position.z ? camera.position.z += 0.1 : camera.position.z -= 0.1;
-                    if ( !guiVars.returnToHome || (withinRange(camera.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
-                        withinRange(camera.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
-                        withinRange(camera.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) ) {
-                        clearInterval(move);
+                    
+                    let matrix = Matrix.Zero();
+                    let target = new Vector3(0,0,0);
+
+                    Matrix.LookAtLHToRef(camera.position, spaceShip.position, Vector3.Up(), matrix);
+                    matrix.invert();
+
+                    target.x = Math.atan(matrix.m[6] / matrix.m[10]);
+
+                    var vDir = spaceShip.position.subtract(camera.position);
+
+                    if (vDir.x >= 0.0) {
+                        target.y = (-Math.atan(vDir.z / vDir.x) + Math.PI / 2.0);
+                    } else {
+                        target.y = (-Math.atan(vDir.z / vDir.x) - Math.PI / 2.0);
                     }
-                }, 20);
+
+                    if (isNaN(target.x)) {
+                        target.x = 0;
+                    }
+
+                    if (isNaN(target.y)) {
+                        target.y = 0;
+                    }
+
+                    camera.rotation.z = 0;
+                    // camera.cameraRotation = target;
+                    guiVars.rotationTarget = target;
+
+                    if( camera.rotation.x - guiVars.rotationTarget.x > .1){
+                        camera.rotation.x-=.01;
+                    }
+                    else if( camera.rotation.x - guiVars.rotationTarget.x < -.1)
+                    {
+                        camera.rotation.x+=.01;
+                    }
+    
+                    if( camera.rotation.y - guiVars.rotationTarget.y > .1){
+                        camera.rotation.y-=.01;
+                    }
+                    else if( camera.rotation.y - guiVars.rotationTarget.y < -0.1)
+                    {
+                        camera.rotation.y+=.01;
+                    }
+                }
             }
         }
+        guiVars.velocity+=guiVars.acceleration;
+        camera.cameraRotation = rotation;
+        camera.position = camera.position.subtract(velocity);
+
     });
 
 
