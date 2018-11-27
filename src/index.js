@@ -40,7 +40,7 @@ canvas.width = canvas.getBoundingClientRect().width;
 canvas.height = canvas.getBoundingClientRect().height;
 
 const buildSkybox = (scene) => {
-    const skybox = MeshBuilder.CreateBox("skyBox", {size:1024.0}, scene);
+    const skybox = MeshBuilder.CreateBox("skyBox", {size:8192.0}, scene);
     const skyboxMaterial = new StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new CubeTexture("assets/cwd", scene, null, null, [bk1,bk2,bk3,bk4,bk5,bk6]);
@@ -436,7 +436,8 @@ const createScene = () => {
     camera.updateUpVectorFromRotation = true;
     camera.checkCollisions = true;
 
-    const light1 = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
+    var sunlight = new HemisphericLight("sunlight", new Vector3(-1, -10, -4), scene);
+    sunlight.groundColor = new BABYLON.Color3(0.1, 0.15, 0.25);
 
     const guiVars = {
         poweredOn: false,
