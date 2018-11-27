@@ -27,6 +27,8 @@ import bk3 from './assets/cwd_pz.jpg';
 import bk4 from './assets/cwd_nx.jpg';
 import bk5 from './assets/cwd_ny.jpg';
 import bk6 from './assets/cwd_nz.jpg';
+import FuturisticArmour from './assets/FuturisticArmour.otf';
+document.body.style.src = `url(${FuturisticArmour}) format("opentype")`;
 
 const canvas = document.getElementById("canvas");
 const engine = new Engine(canvas, true);
@@ -76,7 +78,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     powerText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     powerText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    powerText.color = "black";
+    powerText.color = "white";
 
     advancedTexture.addControl(powerText);
 
@@ -90,7 +92,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     homeText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     homeText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    homeText.color = "black";
+    homeText.color = "white";
     advancedTexture.addControl(homeText);
 
     const fuel = new GUI.TextBlock();
