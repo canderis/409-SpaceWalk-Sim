@@ -28,6 +28,7 @@ import bk4 from './assets/cwd_nx.jpg';
 import bk5 from './assets/cwd_ny.jpg';
 import bk6 from './assets/cwd_nz.jpg';
 import FuturisticArmour from './assets/FuturisticArmour.otf';
+import Success from './assets/Success.png';
 document.body.style.src = `url(${FuturisticArmour}) format("opentype")`;
 
 const canvas = document.getElementById("canvas");
@@ -61,7 +62,17 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     homeProtocol.width = "800px";
     homeProtocol.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     homeProtocol.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    advancedTexture.addControl(homeProtocol);    
+    advancedTexture.addControl(homeProtocol);
+
+    const win = new GUI.Image("win", Success);
+    win.height = "80px";
+    win.width = "800px";
+    win.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    win.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    advancedTexture.addControl(win);    
+    win.isVisible=false;
+
+    guiVars.win = win;
 
     const fuelWarning = new GUI.Image("fuel-warning", FuelWarning);
     fuelWarning.height = "80px";
@@ -412,7 +423,15 @@ const createScene = () => {
 
     // Game Loop
     let ctr = 0;
+    const withinRange = (x, min, max) => x >= min && x <= max;
     scene.onBeforeRenderObservable.add(() => {
+        if (withinRange(camera.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
+                    withinRange(camera.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
+                    withinRange(camera.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) {
+            
+                guiVars.win.isVisible = true;
+                return;
+        }
         if(guiVars.poweredOn && guiVars.fuel > 0) {
             ctr+=guiVars.acceleration*1000;
             console.log(ctr);
@@ -433,15 +452,9 @@ const createScene = () => {
                 rotation = rotation.add(joystick.deltaPosition.scale(0.002));
             }
             else{
-                const withinRange = (x, min, max) => x >= min && x <= max;
                 velocity = new Vector3(0, 0 ,0);
-                if (withinRange(camera.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
-                    withinRange(camera.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
-                    withinRange(camera.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) {
-                    
-                    console.log('home');
-                }
-                else{
+                
+
                     camera.position.x < spaceShip.position.x ? camera.position.x += 0.1 : camera.position.x -= 0.1;
                     camera.position.y < spaceShip.position.y ? camera.position.y += 0.1 : camera.position.y -= 0.1;
                     camera.position.z < spaceShip.position.z ? camera.position.z += 0.1 : camera.position.z -= 0.1;
@@ -489,7 +502,7 @@ const createScene = () => {
                     {
                         camera.rotation.y+=.01;
                     }
-                }
+                
             }
         }
         guiVars.velocity+=guiVars.acceleration;
