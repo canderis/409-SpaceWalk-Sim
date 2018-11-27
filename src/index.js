@@ -20,6 +20,8 @@ import {
 import HandControl from './assets/HandControl.svg';
 import HomeProtocol from './assets/HomeProtocol.png';
 import FuelWarning from './assets/FuelWarning.png';
+import OxygenWarning from './assets/OxygenWarning.png';
+
 
 import bk1 from './assets/cwd_px.jpg';
 import bk2 from './assets/cwd_py.jpg';
@@ -79,7 +81,14 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     fuelWarning.width = "800px";
     fuelWarning.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     fuelWarning.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    advancedTexture.addControl(fuelWarning);    
+    advancedTexture.addControl(fuelWarning);
+
+    const oxygenWarning = new GUI.Image("oxygen-warning", OxygenWarning);
+    oxygenWarning.height = "80px";
+    oxygenWarning.width = "800px";
+    oxygenWarning.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    oxygenWarning.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    advancedTexture.addControl(oxygenWarning);     
 
     const powerText = new GUI.TextBlock();
     powerText.text = "Power On System";
@@ -130,10 +139,23 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     fuel.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
     fuel.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     fuel.color = "white";
+    advancedTexture.addControl(fuel);
+
+
+    const oxygen = new GUI.TextBlock();
+    guiVars.oxygenGUI = oxygen;
+    oxygen.text = `Oxygen: ${guiVars.oxygen}%`;
+    oxygen.top = "30px";
+    oxygen.left = "-10px";
+    oxygen.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    oxygen.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    oxygen.color = "white";
+    oxygenWarning.isVisible = false;
+    advancedTexture.addControl(oxygen);
+
     // fuel.fontFamily="FuturisticArmour";
 
 
-    advancedTexture.addControl(fuel);
 
     const slider = new GUI.Slider();
     slider.minimum = 0.1;
@@ -337,6 +359,14 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     guiVars.fuelWarning = () => {
         homeProtocol.isVisible = false;
         fuelWarning.isVisible = true;
+        oxygenWarning.isVisible = false;
+
+    }
+
+    guiVars.oxygenWarning = () => {
+        homeProtocol.isVisible = false;
+        fuelWarning.isVisible = false;
+        oxygenWarning.isVisible = true;
     }
 
 
@@ -413,7 +443,9 @@ const createScene = () => {
         returnToHome: false,
         acceleration: 0.00001,
         rotationTarget: new Vector3(0,0,0),
-        fuel: 100
+        fuel: 100,
+        oxygen: 100
+
     };
 
     const joystick = buildGUI(scene, guiVars,camera, spaceShip);
@@ -423,6 +455,7 @@ const createScene = () => {
 
     // Game Loop
     let ctr = 0;
+    let oxyCtr = 0;
     const withinRange = (x, min, max) => x >= min && x <= max;
     scene.onBeforeRenderObservable.add(() => {
         if (withinRange(camera.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
@@ -432,10 +465,18 @@ const createScene = () => {
                 guiVars.win.isVisible = true;
                 return;
         }
+        oxyCtr++;
+        if(oxyCtr > 50){
+            oxyCtr = 0;
+            guiVars.oxygen--;
+            guiVars.oxygenGUI.text = `Oxygen: ${guiVars.oxygen}%`;
+            if(guiVars.oxygen < 16){
+                guiVars.oxygenWarning();
+            }
+        }
         if(guiVars.poweredOn && guiVars.fuel > 0) {
-            ctr+=guiVars.acceleration*1000;
-            console.log(ctr);
-            if(ctr > 1){
+            ctr++;
+            if(ctr > 20){
                 guiVars.fuel--;
                 guiVars.fuelGUI.text = `Fuel: ${guiVars.fuel}%`;
                 if(guiVars.fuel < 16){
@@ -443,7 +484,6 @@ const createScene = () => {
                 }
 
                 ctr=0;
-                console.log(guiVars.fuel);
             } 
 
             velocity = velocity.add(camera.upVector.scale(0.0001));
