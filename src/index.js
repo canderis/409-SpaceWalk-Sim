@@ -21,6 +21,8 @@ import HandControl from './assets/HandControl.svg';
 import HomeProtocol from './assets/HomeProtocol.png';
 import FuelWarning from './assets/FuelWarning.png';
 import OxygenWarning from './assets/OxygenWarning.png';
+import NoFuel from './assets/NoFuel.png';
+
 
 
 import bk1 from './assets/cwd_px.jpg';
@@ -31,6 +33,8 @@ import bk5 from './assets/cwd_ny.jpg';
 import bk6 from './assets/cwd_nz.jpg';
 import FuturisticArmour from './assets/FuturisticArmour.otf';
 import Success from './assets/Success.png';
+import Failure from './assets/Failure.png';
+
 document.body.style.src = `url(${FuturisticArmour}) format("opentype")`;
 
 const canvas = document.getElementById("canvas");
@@ -76,12 +80,29 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     guiVars.win = win;
 
+    const lose = new GUI.Image("lose", Failure);
+    lose.height = "80px";
+    lose.width = "800px";
+    lose.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    lose.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    advancedTexture.addControl(lose);    
+    lose.isVisible=false;
+
+    guiVars.lose = lose;
+
     const fuelWarning = new GUI.Image("fuel-warning", FuelWarning);
     fuelWarning.height = "80px";
     fuelWarning.width = "800px";
     fuelWarning.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     fuelWarning.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     advancedTexture.addControl(fuelWarning);
+
+    const noFuel = new GUI.Image("no-fuel", NoFuel);
+    noFuel.height = "80px";
+    noFuel.width = "800px";
+    noFuel.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    noFuel.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    advancedTexture.addControl(noFuel);
 
     const oxygenWarning = new GUI.Image("oxygen-warning", OxygenWarning);
     oxygenWarning.height = "80px";
@@ -355,11 +376,22 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     homeProtocol.isVisible = false;
     fuelWarning.isVisible = false;
+    noFuel.isVisible = false;
+
+
+    guiVars.noFuel = () => {
+        homeProtocol.isVisible = false;
+        noFuel.isVisible = true;
+        fuelWarning.isVisible = false;
+        oxygenWarning.isVisible = false;
+
+    }
 
     guiVars.fuelWarning = () => {
         homeProtocol.isVisible = false;
         fuelWarning.isVisible = true;
         oxygenWarning.isVisible = false;
+        noFuel.isVisible = false;
 
     }
 
@@ -367,6 +399,8 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
         homeProtocol.isVisible = false;
         fuelWarning.isVisible = false;
         oxygenWarning.isVisible = true;
+        noFuel.isVisible = false;
+
     }
 
 
@@ -467,13 +501,22 @@ const createScene = () => {
                 return;
         }
         oxyCtr++;
-        if(oxyCtr > 50){
+        if(oxyCtr > 20){
+            if(guiVars.oxygen < 16){
+                if(guiVars.oxygen == 0){
+                    guiVars.lose.isVisible = true;
+                    return;
+                }else{
+                    guiVars.oxygenWarning();
+
+                }
+            }
             oxyCtr = 0;
             guiVars.oxygen--;
             guiVars.oxygenGUI.text = `Oxygen: ${guiVars.oxygen}%`;
-            if(guiVars.oxygen < 16){
-                guiVars.oxygenWarning();
-            }
+        }
+        if(guiVars.fuel == 0){
+            guiVars.noFuel();
         }
         if(guiVars.poweredOn && guiVars.fuel > 0) {
             ctr++;
