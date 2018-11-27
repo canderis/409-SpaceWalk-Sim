@@ -75,6 +75,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     powerText.left = "40px";
     powerText.top = "-230px";
     powerText.marginLeft = "5px";
+    powerText.fontFamily="FuturisticArmour";
 
     powerText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     powerText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
@@ -93,7 +94,22 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     homeText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     homeText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     homeText.color = "white";
+    homeText.fontFamily="FuturisticArmour";
     advancedTexture.addControl(homeText);
+
+    const throttleText = new GUI.TextBlock();
+    throttleText.text = "Throttle";
+    // powerText.width = "180px";
+    throttleText.left = "10px";
+    throttleText.top = "-140px";
+    throttleText.marginLeft = "5px";
+
+    throttleText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    throttleText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    throttleText.color = "white";
+    throttleText.fontFamily="FuturisticArmour";
+    advancedTexture.addControl(throttleText);
+
 
     const fuel = new GUI.TextBlock();
     guiVars.fuelGUI = fuel;
@@ -103,6 +119,8 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     fuel.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
     fuel.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     fuel.color = "white";
+    // fuel.fontFamily="FuturisticArmour";
+
 
     advancedTexture.addControl(fuel);
 
@@ -114,8 +132,8 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     slider.width = "150px";
     slider.color = "#003399";
     slider.background = "grey";
-    slider.left = "200px";
-    slider.top = "-230px";
+    slider.left = "5px";
+    slider.top = "-110px";
     slider.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     slider.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     slider.onValueChangedObservable.add(function (value) {
@@ -126,8 +144,8 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     let joystick = new VirtualJoystick(true);
 
-    joystick._joystickPointerStartPos.x = 100;
-    joystick._joystickPointerStartPos.y = 100;
+    joystick._joystickPointerStartPos.x = 120;
+    joystick._joystickPointerStartPos.y = 190;
 
     joystick._onPointerDown = function(e) {
         var positionOnScreenCondition;
@@ -278,10 +296,10 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     joystick.setAxisForUpDown(JoystickAxis.X);
     joystick.setAxisForLeftRight(JoystickAxis.Y);
-    VirtualJoystick.Canvas.height = 200;
-    VirtualJoystick.Canvas.width = 200;
-    VirtualJoystick.Canvas.style.height = '200px';
-    VirtualJoystick.Canvas.style.width = '200px';
+    VirtualJoystick.Canvas.height = 280;
+    VirtualJoystick.Canvas.width = 230;
+    VirtualJoystick.Canvas.style.height = '280px';
+    VirtualJoystick.Canvas.style.width = '230px';
     VirtualJoystick.Canvas.style.bottom = '0';
     VirtualJoystick.Canvas.style.top = 'unset';
 
