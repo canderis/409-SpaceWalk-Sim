@@ -310,18 +310,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     power.isChecked = false;
     power.color = "red";
     power.background = "red";
-    power.onIsCheckedChangedObservable.add(function(value) {
-        guiVars.poweredOn = value;
-        if (value) {
-            joystick.deltaPosition = joystick.deltaPosition.scale(0);
-            power.color = "green";
-            power.background = "green";
-        }
-        else{
-            power.color = "red";
-            power.background = "red";
-        }
-    });
+   
 
     power.left = "10px";
     power.top = "-230px";
@@ -344,11 +333,13 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     returnToHome.isChecked = false;
     returnToHome.color = "red";
     returnToHome.background = "red";
+    returnToHome.isEnabled = false;
     returnToHome.onIsCheckedChangedObservable.add(function(value) {
         guiVars.returnToHome = value;
         if (value) {
             joystick.deltaPosition = joystick.deltaPosition.scale(0);
-            homeProtocol.isVisible = true;
+            if(!fuelWarning.isVisible)
+                homeProtocol.isVisible = true;
             returnToHome.color = "green";
             returnToHome.background = "green";
         }
@@ -358,6 +349,22 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
             returnToHome.color = "red";
             returnToHome.background = "red";
+        }
+    });
+
+    power.onIsCheckedChangedObservable.add(function(value) {
+        guiVars.poweredOn = value;
+        if (value) {
+            joystick.deltaPosition = joystick.deltaPosition.scale(0);
+            returnToHome.isEnabled = true;
+            power.color = "green";
+            power.background = "green";
+        }
+        else{
+            power.color = "red";
+            power.background = "red";
+            returnToHome.isEnabled = false;
+
         }
     });
 
