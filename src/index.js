@@ -29,9 +29,9 @@ const createScene = () => {
     VirtualJoystick.canvas = canvas;
 
     const spaceShip = MeshBuilder.CreateBox("spaceShip", { height: 5, width: 5, depth: 10 }, scene);
-    spaceShip.position.x = 10;
-    spaceShip.position.y = 10;
-    spaceShip.position.x = 10;
+    spaceShip.position.x = 100;
+    spaceShip.position.y = 100;
+    spaceShip.position.x = 100;
     
     const sphere =  MeshBuilder.CreateBox("spaceman", { height: 2, width: 2, depth: 3 }, scene);
     sphere.position.x = 0;
@@ -64,14 +64,14 @@ const createScene = () => {
 
     // Airplane like rotation, with faster roll correction and banked-turns.
     // Default is 100. A higher number means slower correction.
-    camera.rollCorrect = 10;
+    // camera.rollCorrect = 10;
     // Default is false.
-    camera.bankedTurn = true;
+    // camera.bankedTurn = true;
     // Defaults to 90° in radians in how far banking will roll the camera.
-    camera.bankedTurnLimit = Math.PI / 2;
+    // camera.bankedTurnLimit = Math.PI / 2;
     // How much of the Yawing (turning) will affect the Rolling (banked-turn.)
     // Less than 1 will reduce the Rolling, and more than 1 will increase it.
-    camera.bankedTurnMultiplier = 1;
+    // camera.bankedTurnMultiplier = 1;
     camera.noRotationConstraint = true;
     camera.updateUpVectorFromRotation = true;
 
@@ -79,8 +79,12 @@ const createScene = () => {
     console.log(camera);
 
     var light1 = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
+    let guiVars = {
+        poweredOn: false,
+        returnToHome: false,
+    };
 
-    let joystick = buildGUI(scene);
+    let joystick = buildGUI(scene, guiVars);
 
     // Keyboard events
     var inputMap = {};
@@ -94,6 +98,7 @@ const createScene = () => {
     const withinRange = (x, min, max) => {
         return x >= min && x <= max;
     }
+
 
 
     var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, scene);
@@ -120,38 +125,23 @@ const createScene = () => {
 
     // Game Loop
     scene.onBeforeRenderObservable.add(() => {
-        // console.log('loop');
 
-        
-        camera.cameraRotation = camera.cameraRotation.addVector3(joystick.deltaPosition.scale(0.005));
-
-        // console.log(joystick.deltaPosition)
-
-        // TODO: remap to a switch to activate return to home base
-        if (inputMap["g"]) {
-            let move = setInterval (() => {
-                camera.position.x < spaceShip.position.x ? camera.position.x += 0.1 : camera.position.x -= 0.1;
-                camera.position.y < spaceShip.position.y ? camera.position.y += 0.1 : camera.position.y -= 0.1;
-                camera.position.z < spaceShip.position.z ? camera.position.z += 0.1 : camera.position.z -= 0.1;
-                if (withinRange(camera.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
-                    withinRange(camera.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
-                    withinRange(camera.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) {
-                    clearInterval(move);
-                }
-            }, 20);
-        }
-        // move position of the space ship for testing
-        if (inputMap["w"]) {
-            camera.position.y += 0.1;
-        }
-        if (inputMap["s"]) {
-            camera.position.y -= 0.1;
-        }
-        if (inputMap["a"]) {
-            camera.position.x -= 0.1;
-        }
-        if (inputMap["d"]) {
-            camera.position.x += 0.1;
+        if(guiVars.poweredOn) {
+            if(!guiVars.returnToHome){
+                camera.cameraRotation = camera.cameraRotation.addVector3(joystick.deltaPosition.scale(0.003));
+            }
+            else{
+                let move = setInterval (() => {
+                    camera.position.x < spaceShip.position.x ? camera.position.x += 0.1 : camera.position.x -= 0.1;
+                    camera.position.y < spaceShip.position.y ? camera.position.y += 0.1 : camera.position.y -= 0.1;
+                    camera.position.z < spaceShip.position.z ? camera.position.z += 0.1 : camera.position.z -= 0.1;
+                    if ( !guiVars.returnToHome || (withinRange(camera.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
+                        withinRange(camera.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
+                        withinRange(camera.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) ) {
+                        clearInterval(move);
+                    }
+                }, 20);
+            }
         }
     });
 
@@ -175,7 +165,7 @@ window.addEventListener("resize", function () {
 
 
 
-function buildGUI(scene){
+function buildGUI(scene, guiVars){
     const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
     const handControl = new BABYLON.GUI.Image("hand-module", HandControl);
     handControl.height = "300px";
@@ -184,29 +174,7 @@ function buildGUI(scene){
     handControl.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     advancedTexture.addControl(handControl);    
 
-    const power = new GUI.Checkbox();
-    power.isChecked = false;
-    power.color = "red";
-    power.background = "red";
-    power.onIsCheckedChangedObservable.add(function(value) {
-        if (value) {
-            power.color = "green";
-            power.background = "green";
-        }
-        else{
-            power.color = "red";
-            power.background = "red";
-        }
-    });
-
-    power.left = "10px";
-    power.top = "-230px";
-    power.height = "20px";
-    power.width = "20px";
-    power.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-    power.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    advancedTexture.addControl(power);
-
+    
 
     const powerText = new BABYLON.GUI.TextBlock();
     powerText.text = "Power On System";
@@ -220,6 +188,20 @@ function buildGUI(scene){
     powerText.color = "black";
 
     advancedTexture.addControl(powerText);
+
+
+    const homeText = new BABYLON.GUI.TextBlock();
+    homeText.text = "Return to Home";
+    // powerText.width = "180px";
+    homeText.left = "40px";
+    homeText.top = "-200px";
+    homeText.marginLeft = "5px";
+
+    homeText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    homeText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    homeText.color = "black";
+
+    advancedTexture.addControl(homeText);
 
     const slider = new BABYLON.GUI.Slider();
     slider.minimum = 0.1;
@@ -308,7 +290,7 @@ function buildGUI(scene){
             });
         }
         else{
-            this.deltaPosition = this.deltaPosition.scale(0.9);
+            // this.deltaPosition = this.deltaPosition.scale(0.9);
         }
         requestAnimationFrame(() => { this._drawVirtualJoystick(); });
     }
@@ -406,6 +388,56 @@ function buildGUI(scene){
     VirtualJoystick.Canvas.style.left = '150px';
 
 
+    const power = new GUI.Checkbox();
+    power.isChecked = false;
+    power.color = "red";
+    power.background = "red";
+    power.onIsCheckedChangedObservable.add(function(value) {
+        guiVars.poweredOn = value;
+        if (value) {
+            joystick.deltaPosition = joystick.deltaPosition.scale(0);
+            power.color = "green";
+            power.background = "green";
+        }
+        else{
+            power.color = "red";
+            power.background = "red";
+        }
+    });
+
+    power.left = "10px";
+    power.top = "-230px";
+    power.height = "20px";
+    power.width = "20px";
+    power.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    power.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    advancedTexture.addControl(power);
+
+
+    const returnToHome = new GUI.Checkbox();
+    returnToHome.isChecked = false;
+    returnToHome.color = "red";
+    returnToHome.background = "red";
+    returnToHome.onIsCheckedChangedObservable.add(function(value) {
+        guiVars.returnToHome = value;
+        if (value) {
+            joystick.deltaPosition = joystick.deltaPosition.scale(0);
+            returnToHome.color = "green";
+            returnToHome.background = "green";
+        }
+        else{
+            returnToHome.color = "red";
+            returnToHome.background = "red";
+        }
+    });
+
+    returnToHome.left = "10px";
+    returnToHome.top = "-200px";
+    returnToHome.height = "20px";
+    returnToHome.width = "20px";
+    returnToHome.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    returnToHome.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    advancedTexture.addControl(returnToHome);
 
 
     joystick.init();
