@@ -18,7 +18,9 @@ import {
 } from 'babylonjs';
 
 import HandControl from './assets/HandControl.svg';
-import Power from './assets/Power.png';
+import HomeProtocol from './assets/HomeProtocol.png';
+import FuelWarning from './assets/FuelWarning.png';
+
 import bk1 from './assets/cwd_px.jpg';
 import bk2 from './assets/cwd_py.jpg';
 import bk3 from './assets/cwd_pz.jpg';
@@ -50,7 +52,21 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     handControl.width = "400px";
     handControl.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     handControl.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    advancedTexture.addControl(handControl);    
+    advancedTexture.addControl(handControl);  
+
+    const homeProtocol = new GUI.Image("home-protocol", HomeProtocol);
+    homeProtocol.height = "80px";
+    homeProtocol.width = "800px";
+    homeProtocol.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    homeProtocol.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    advancedTexture.addControl(homeProtocol);    
+
+    const fuelWarning = new GUI.Image("fuel-warning", FuelWarning);
+    fuelWarning.height = "80px";
+    fuelWarning.width = "800px";
+    fuelWarning.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    fuelWarning.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    advancedTexture.addControl(fuelWarning);    
 
     const powerText = new GUI.TextBlock();
     powerText.text = "Power On System";
@@ -75,8 +91,18 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     homeText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     homeText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     homeText.color = "black";
-
     advancedTexture.addControl(homeText);
+
+    const fuel = new GUI.TextBlock();
+    guiVars.fuelGUI = fuel;
+    fuel.text = `Fuel: ${guiVars.fuel}%`;
+    fuel.top = "10px";
+    fuel.left = "-10px";
+    fuel.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    fuel.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    fuel.color = "white";
+
+    advancedTexture.addControl(fuel);
 
     const slider = new GUI.Slider();
     slider.minimum = 0.1;
@@ -285,6 +311,15 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     power.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     advancedTexture.addControl(power);
 
+    homeProtocol.isVisible = false;
+    fuelWarning.isVisible = false;
+
+    guiVars.fuelWarning = () => {
+        homeProtocol.isVisible = false;
+        fuelWarning.isVisible = true;
+    }
+
+
     const returnToHome = new GUI.Checkbox();
     returnToHome.isChecked = false;
     returnToHome.color = "red";
@@ -293,11 +328,14 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
         guiVars.returnToHome = value;
         if (value) {
             joystick.deltaPosition = joystick.deltaPosition.scale(0);
+            homeProtocol.isVisible = true;
             returnToHome.color = "green";
             returnToHome.background = "green";
         }
         else{
             guiVars.rotationTarget = new Vector3(0,0,0);
+            homeProtocol.isVisible = false;
+
             returnToHome.color = "red";
             returnToHome.background = "red";
         }
@@ -312,7 +350,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     advancedTexture.addControl(returnToHome);
 
     joystick.init();
-    
+
     return joystick;
 }
 
@@ -336,7 +374,8 @@ const createScene = () => {
         poweredOn: false,
         returnToHome: false,
         acceleration: 0.00001,
-        rotationTarget: new Vector3(0,0,0)
+        rotationTarget: new Vector3(0,0,0),
+        fuel: 100
     };
 
     const joystick = buildGUI(scene, guiVars,camera, spaceShip);
@@ -345,8 +384,22 @@ const createScene = () => {
     let velocity = new Vector3(0.01, 0.02, 0.03);
 
     // Game Loop
+    let ctr = 0;
     scene.onBeforeRenderObservable.add(() => {
-        if(guiVars.poweredOn) {
+        if(guiVars.poweredOn && guiVars.fuel > 0) {
+            ctr+=guiVars.acceleration*1000;
+            console.log(ctr);
+            if(ctr > 1){
+                guiVars.fuel--;
+                guiVars.fuelGUI.text = `Fuel: ${guiVars.fuel}%`;
+                if(guiVars.fuel < 16){
+                    guiVars.fuelWarning();
+                }
+
+                ctr=0;
+                console.log(guiVars.fuel);
+            } 
+
             velocity = velocity.add(camera.upVector.scale(0.0001));
             velocity = velocity.add(velocity.scale(guiVars.acceleration))
             if(!guiVars.returnToHome){
