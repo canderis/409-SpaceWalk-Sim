@@ -18,13 +18,17 @@ import {
 } from 'babylonjs';
 
 import HandControl from './assets/HandControl.svg';
-import Power from './assets/Power.png';
+import HomeProtocol from './assets/HomeProtocol.png';
+import FuelWarning from './assets/FuelWarning.png';
+
 import bk1 from './assets/cwd_px.jpg';
 import bk2 from './assets/cwd_py.jpg';
 import bk3 from './assets/cwd_pz.jpg';
 import bk4 from './assets/cwd_nx.jpg';
 import bk5 from './assets/cwd_ny.jpg';
 import bk6 from './assets/cwd_nz.jpg';
+import FuturisticArmour from './assets/FuturisticArmour.otf';
+document.body.style.src = `url(${FuturisticArmour}) format("opentype")`;
 
 const canvas = document.getElementById("canvas");
 const engine = new Engine(canvas, true);
@@ -50,17 +54,32 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     handControl.width = "400px";
     handControl.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     handControl.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    advancedTexture.addControl(handControl);    
+    advancedTexture.addControl(handControl);  
+
+    const homeProtocol = new GUI.Image("home-protocol", HomeProtocol);
+    homeProtocol.height = "80px";
+    homeProtocol.width = "800px";
+    homeProtocol.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    homeProtocol.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    advancedTexture.addControl(homeProtocol);    
+
+    const fuelWarning = new GUI.Image("fuel-warning", FuelWarning);
+    fuelWarning.height = "80px";
+    fuelWarning.width = "800px";
+    fuelWarning.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    fuelWarning.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    advancedTexture.addControl(fuelWarning);    
 
     const powerText = new GUI.TextBlock();
     powerText.text = "Power On System";
     powerText.left = "40px";
     powerText.top = "-230px";
     powerText.marginLeft = "5px";
+    powerText.fontFamily="FuturisticArmour";
 
     powerText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     powerText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    powerText.color = "black";
+    powerText.color = "white";
 
     advancedTexture.addControl(powerText);
 
@@ -74,9 +93,36 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     homeText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     homeText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    homeText.color = "black";
-
+    homeText.color = "white";
+    homeText.fontFamily="FuturisticArmour";
     advancedTexture.addControl(homeText);
+
+    const throttleText = new GUI.TextBlock();
+    throttleText.text = "Throttle";
+    // powerText.width = "180px";
+    throttleText.left = "10px";
+    throttleText.top = "-140px";
+    throttleText.marginLeft = "5px";
+
+    throttleText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    throttleText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    throttleText.color = "white";
+    throttleText.fontFamily="FuturisticArmour";
+    advancedTexture.addControl(throttleText);
+
+
+    const fuel = new GUI.TextBlock();
+    guiVars.fuelGUI = fuel;
+    fuel.text = `Fuel: ${guiVars.fuel}%`;
+    fuel.top = "10px";
+    fuel.left = "-10px";
+    fuel.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    fuel.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    fuel.color = "white";
+    // fuel.fontFamily="FuturisticArmour";
+
+
+    advancedTexture.addControl(fuel);
 
     const slider = new GUI.Slider();
     slider.minimum = 0.1;
@@ -86,20 +132,20 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     slider.width = "150px";
     slider.color = "#003399";
     slider.background = "grey";
-    slider.left = "200px";
-    slider.top = "-230px";
+    slider.left = "5px";
+    slider.top = "-110px";
     slider.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     slider.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     slider.onValueChangedObservable.add(function (value) {
-        guiVars.acceleration = 0.0001 * value;
+        guiVars.acceleration = 0.00001 * value;
         console.log(guiVars)
     });
     advancedTexture.addControl(slider);
 
     let joystick = new VirtualJoystick(true);
 
-    joystick._joystickPointerStartPos.x = 100;
-    joystick._joystickPointerStartPos.y = 100;
+    joystick._joystickPointerStartPos.x = 120;
+    joystick._joystickPointerStartPos.y = 190;
 
     joystick._onPointerDown = function(e) {
         var positionOnScreenCondition;
@@ -250,10 +296,10 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     joystick.setAxisForUpDown(JoystickAxis.X);
     joystick.setAxisForLeftRight(JoystickAxis.Y);
-    VirtualJoystick.Canvas.height = 200;
-    VirtualJoystick.Canvas.width = 200;
-    VirtualJoystick.Canvas.style.height = '200px';
-    VirtualJoystick.Canvas.style.width = '200px';
+    VirtualJoystick.Canvas.height = 280;
+    VirtualJoystick.Canvas.width = 230;
+    VirtualJoystick.Canvas.style.height = '280px';
+    VirtualJoystick.Canvas.style.width = '230px';
     VirtualJoystick.Canvas.style.bottom = '0';
     VirtualJoystick.Canvas.style.top = 'unset';
 
@@ -264,18 +310,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     power.isChecked = false;
     power.color = "red";
     power.background = "red";
-    power.onIsCheckedChangedObservable.add(function(value) {
-        guiVars.poweredOn = value;
-        if (value) {
-            joystick.deltaPosition = joystick.deltaPosition.scale(0);
-            power.color = "green";
-            power.background = "green";
-        }
-        else{
-            power.color = "red";
-            power.background = "red";
-        }
-    });
+   
 
     power.left = "10px";
     power.top = "-230px";
@@ -285,28 +320,51 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     power.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     advancedTexture.addControl(power);
 
+    homeProtocol.isVisible = false;
+    fuelWarning.isVisible = false;
+
+    guiVars.fuelWarning = () => {
+        homeProtocol.isVisible = false;
+        fuelWarning.isVisible = true;
+    }
+
 
     const returnToHome = new GUI.Checkbox();
     returnToHome.isChecked = false;
     returnToHome.color = "red";
     returnToHome.background = "red";
+    returnToHome.isEnabled = false;
     returnToHome.onIsCheckedChangedObservable.add(function(value) {
         guiVars.returnToHome = value;
         if (value) {
             joystick.deltaPosition = joystick.deltaPosition.scale(0);
+            if(!fuelWarning.isVisible)
+                homeProtocol.isVisible = true;
             returnToHome.color = "green";
             returnToHome.background = "green";
-
-            // camera.upVector.normalize();
-
-            
-                    // camera.cameraRotation = new Vector2(guiVars.rotationTarget.x, guiVars.rotationTarget.y)
-
         }
         else{
             guiVars.rotationTarget = new Vector3(0,0,0);
+            homeProtocol.isVisible = false;
+
             returnToHome.color = "red";
             returnToHome.background = "red";
+        }
+    });
+
+    power.onIsCheckedChangedObservable.add(function(value) {
+        guiVars.poweredOn = value;
+        if (value) {
+            joystick.deltaPosition = joystick.deltaPosition.scale(0);
+            returnToHome.isEnabled = true;
+            power.color = "green";
+            power.background = "green";
+        }
+        else{
+            power.color = "red";
+            power.background = "red";
+            returnToHome.isEnabled = false;
+
         }
     });
 
@@ -318,47 +376,10 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     returnToHome.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     advancedTexture.addControl(returnToHome);
 
-
     joystick.init();
-    joystick.setJoystickSensibility = 1000000000;
-    // joystick.releaseCanvas()
+
     return joystick;
 }
-
-// simplified face funtion
-const facePoint = (rotatingObject, pointToRotateTo) => {
-    // a directional vector from one object to the other one
-    var direction = pointToRotateTo.subtract(rotatingObject.position);
-    
-    
-    if (!rotatingObject.rotationQuaternion) {
-        rotatingObject.rotationQuaternion = BABYLON.Quaternion.Identity();
-    }
-    
-    direction.normalize();
-    
-    var mat = BABYLON.Matrix.Identity();
-    
-    var upVec = BABYLON.Vector3.Up();
-    
-    var xaxis = BABYLON.Vector3.Cross(direction, upVec);
-    var yaxis = BABYLON.Vector3.Cross(xaxis, direction);
-    
-    mat.m[0] = xaxis.x;
-    mat.m[1] = xaxis.y;
-    mat.m[2] = xaxis.z;
-    
-    mat.m[4] = direction.x;
-    mat.m[5] = direction.y;
-    mat.m[6] = direction.z;
-    
-    mat.m[8] = yaxis.x;
-    mat.m[9] = yaxis.y;
-    mat.m[10] = yaxis.z;
-    
-    BABYLON.Quaternion.FromRotationMatrixToRef(mat, rotatingObject.rotationQuaternion);
-}
-
 
 const createScene = () => {
     const scene = new Scene(engine);
@@ -380,8 +401,9 @@ const createScene = () => {
     const guiVars = {
         poweredOn: false,
         returnToHome: false,
-        acceleration: 0.0001,
-        rotationTarget: new Vector3(0,0,0)
+        acceleration: 0.00001,
+        rotationTarget: new Vector3(0,0,0),
+        fuel: 100
     };
 
     const joystick = buildGUI(scene, guiVars,camera, spaceShip);
@@ -390,11 +412,26 @@ const createScene = () => {
     let velocity = new Vector3(0.01, 0.02, 0.03);
 
     // Game Loop
+    let ctr = 0;
     scene.onBeforeRenderObservable.add(() => {
-        if(guiVars.poweredOn) {
-            velocity = velocity.add(camera.upVector.scale(guiVars.acceleration));
+        if(guiVars.poweredOn && guiVars.fuel > 0) {
+            ctr+=guiVars.acceleration*1000;
+            console.log(ctr);
+            if(ctr > 1){
+                guiVars.fuel--;
+                guiVars.fuelGUI.text = `Fuel: ${guiVars.fuel}%`;
+                if(guiVars.fuel < 16){
+                    guiVars.fuelWarning();
+                }
+
+                ctr=0;
+                console.log(guiVars.fuel);
+            } 
+
+            velocity = velocity.add(camera.upVector.scale(0.0001));
+            velocity = velocity.add(velocity.scale(guiVars.acceleration))
             if(!guiVars.returnToHome){
-                rotation = rotation.add(joystick.deltaPosition.scale(0.003));
+                rotation = rotation.add(joystick.deltaPosition.scale(0.002));
             }
             else{
                 const withinRange = (x, min, max) => x >= min && x <= max;
@@ -449,7 +486,7 @@ const createScene = () => {
                     if( camera.rotation.y - guiVars.rotationTarget.y > .1){
                         camera.rotation.y-=.01;
                     }
-                    else if( camera.rotation.y - guiVars.rotationTarget.y < -0.1)
+                    else if( camera.rotation.y - guiVars.rotationTarget.y < -.1)
                     {
                         camera.rotation.y+=.01;
                     }
@@ -458,7 +495,7 @@ const createScene = () => {
         }
         guiVars.velocity+=guiVars.acceleration;
         camera.cameraRotation = rotation;
-        camera.position = camera.position.subtract(velocity);
+        camera.position = camera.position.add(velocity);
 
     });
 
