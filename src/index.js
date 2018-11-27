@@ -167,6 +167,10 @@ engine.runRenderLoop(() => {
 
 window.addEventListener("resize", function () {
     engine.resize();
+    VirtualJoystick.Canvas.height = 125;
+    VirtualJoystick.Canvas.width = 125;
+
+
 });
 
 
@@ -237,19 +241,20 @@ function buildGUI(scene){
 
     let joystick = new BABYLON.VirtualJoystick(true);
 
-    joystick._joystickPointerStartPos.x = 275;
-    joystick._joystickPointerStartPos.y = canvas.height - 125;
+    joystick._joystickPointerStartPos.x = 100;
+    joystick._joystickPointerStartPos.y = 100;
 
     joystick._onPointerDown = function(e) {
         var positionOnScreenCondition;
+        console.log(e);
 
         e.preventDefault();
 
         if (this._leftJoystick === true) {
-            positionOnScreenCondition = (e.clientX < VirtualJoystick.halfWidth);
+            positionOnScreenCondition = (e.offsetX < VirtualJoystick.halfWidth);
         }
         else {
-            positionOnScreenCondition = (e.clientX > VirtualJoystick.halfWidth);
+            positionOnScreenCondition = (e.offsetX > VirtualJoystick.halfWidth);
         }
 
         // ;
@@ -269,7 +274,7 @@ function buildGUI(scene){
             // You can only trigger the action buttons with a joystick declared
             if (VirtualJoystick._globalJoystickIndex < 2 && this._action) {
                 this._action();
-                this._touches.add(e.pointerId.toString(), { x: e.clientX, y: e.clientY, prevX: e.clientX, prevY: e.clientY });
+                this._touches.add(e.pointerId.toString(), { x: e.offsetX, y: e.offsetY, prevX: e.offsetX, prevY: e.offsetY });
             }
         }
     }
@@ -344,8 +349,64 @@ function buildGUI(scene){
 
         this._touches.remove(e.pointerId.toString());
     };
+
+    joystick._onPointerMove = function(e) {
+        // If the current pointer is the one associated to the joystick (first touch contact)
+        if (this._joystickPointerID == e.pointerId) {
+            this._joystickPointerPos.x = e.offsetX;
+            this._joystickPointerPos.y = e.offsetY;
+            this._deltaJoystickVector = this._joystickPointerPos.clone();
+            this._deltaJoystickVector = this._deltaJoystickVector.subtract(this._joystickPointerStartPos);
+
+            var directionLeftRight = this.reverseLeftRight ? -1 : 1;
+            var deltaJoystickX = directionLeftRight * this._deltaJoystickVector.x / this._inversedSensibility;
+            switch (this._axisTargetedByLeftAndRight) {
+                case JoystickAxis.X:
+                    this.deltaPosition.x = Math.min(1, Math.max(-1, deltaJoystickX));
+                    break;
+                case JoystickAxis.Y:
+                    this.deltaPosition.y = Math.min(1, Math.max(-1, deltaJoystickX));
+                    break;
+                case JoystickAxis.Z:
+                    this.deltaPosition.z = Math.min(1, Math.max(-1, deltaJoystickX));
+                    break;
+            }
+            var directionUpDown = this.reverseUpDown ? 1 : -1;
+            var deltaJoystickY = directionUpDown * this._deltaJoystickVector.y / this._inversedSensibility;
+            switch (this._axisTargetedByUpAndDown) {
+                case JoystickAxis.X:
+                    this.deltaPosition.x = Math.min(1, Math.max(-1, deltaJoystickY));
+                    break;
+                case JoystickAxis.Y:
+                    this.deltaPosition.y = Math.min(1, Math.max(-1, deltaJoystickY));
+                    break;
+                case JoystickAxis.Z:
+                    this.deltaPosition.z = Math.min(1, Math.max(-1, deltaJoystickY));
+                    break;
+            }
+        }
+        else {
+            let data = this._touches.get(e.pointerId.toString());
+            if (data) {
+                data.x = e.offsetX;
+                data.y = e.offsetX;
+            }
+        }
+    }
+
     joystick.setAxisForUpDown(JoystickAxis.X);
     joystick.setAxisForLeftRight(JoystickAxis.Y);
+    VirtualJoystick.Canvas.height = 200;
+    VirtualJoystick.Canvas.width = 200;
+    VirtualJoystick.Canvas.style.height = '200px';
+    VirtualJoystick.Canvas.style.width = '200px';
+    VirtualJoystick.Canvas.style.bottom = '0';
+    VirtualJoystick.Canvas.style.top = 'unset';
+
+    VirtualJoystick.Canvas.style.left = '150px';
+
+
+
 
     joystick.init();
     joystick.setJoystickSensibility = 1000000000;
