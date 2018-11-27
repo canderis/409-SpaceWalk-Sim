@@ -91,7 +91,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     slider.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     slider.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     slider.onValueChangedObservable.add(function (value) {
-        guiVars.acceleration = 0.0001 * value;
+        guiVars.acceleration = 0.00001 * value;
         console.log(guiVars)
     });
     advancedTexture.addControl(slider);
@@ -285,7 +285,6 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     power.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     advancedTexture.addControl(power);
 
-
     const returnToHome = new GUI.Checkbox();
     returnToHome.isChecked = false;
     returnToHome.color = "red";
@@ -296,12 +295,6 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
             joystick.deltaPosition = joystick.deltaPosition.scale(0);
             returnToHome.color = "green";
             returnToHome.background = "green";
-
-            // camera.upVector.normalize();
-
-            
-                    // camera.cameraRotation = new Vector2(guiVars.rotationTarget.x, guiVars.rotationTarget.y)
-
         }
         else{
             guiVars.rotationTarget = new Vector3(0,0,0);
@@ -318,47 +311,10 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     returnToHome.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     advancedTexture.addControl(returnToHome);
 
-
     joystick.init();
-    joystick.setJoystickSensibility = 1000000000;
-    // joystick.releaseCanvas()
+    
     return joystick;
 }
-
-// simplified face funtion
-const facePoint = (rotatingObject, pointToRotateTo) => {
-    // a directional vector from one object to the other one
-    var direction = pointToRotateTo.subtract(rotatingObject.position);
-    
-    
-    if (!rotatingObject.rotationQuaternion) {
-        rotatingObject.rotationQuaternion = BABYLON.Quaternion.Identity();
-    }
-    
-    direction.normalize();
-    
-    var mat = BABYLON.Matrix.Identity();
-    
-    var upVec = BABYLON.Vector3.Up();
-    
-    var xaxis = BABYLON.Vector3.Cross(direction, upVec);
-    var yaxis = BABYLON.Vector3.Cross(xaxis, direction);
-    
-    mat.m[0] = xaxis.x;
-    mat.m[1] = xaxis.y;
-    mat.m[2] = xaxis.z;
-    
-    mat.m[4] = direction.x;
-    mat.m[5] = direction.y;
-    mat.m[6] = direction.z;
-    
-    mat.m[8] = yaxis.x;
-    mat.m[9] = yaxis.y;
-    mat.m[10] = yaxis.z;
-    
-    BABYLON.Quaternion.FromRotationMatrixToRef(mat, rotatingObject.rotationQuaternion);
-}
-
 
 const createScene = () => {
     const scene = new Scene(engine);
@@ -379,7 +335,7 @@ const createScene = () => {
     const guiVars = {
         poweredOn: false,
         returnToHome: false,
-        acceleration: 0.0001,
+        acceleration: 0.00001,
         rotationTarget: new Vector3(0,0,0)
     };
 
@@ -391,9 +347,10 @@ const createScene = () => {
     // Game Loop
     scene.onBeforeRenderObservable.add(() => {
         if(guiVars.poweredOn) {
-            velocity = velocity.add(camera.upVector.scale(guiVars.acceleration));
+            velocity = velocity.add(camera.upVector.scale(0.0001));
+            velocity = velocity.add(velocity.scale(guiVars.acceleration))
             if(!guiVars.returnToHome){
-                rotation = rotation.add(joystick.deltaPosition.scale(0.003));
+                rotation = rotation.add(joystick.deltaPosition.scale(0.002));
             }
             else{
                 const withinRange = (x, min, max) => x >= min && x <= max;
@@ -448,7 +405,7 @@ const createScene = () => {
                     if( camera.rotation.y - guiVars.rotationTarget.y > .1){
                         camera.rotation.y-=.01;
                     }
-                    else if( camera.rotation.y - guiVars.rotationTarget.y < -0.1)
+                    else if( camera.rotation.y - guiVars.rotationTarget.y < -.1)
                     {
                         camera.rotation.y+=.01;
                     }
@@ -457,7 +414,7 @@ const createScene = () => {
         }
         guiVars.velocity+=guiVars.acceleration;
         camera.cameraRotation = rotation;
-        camera.position = camera.position.subtract(velocity);
+        camera.position = camera.position.add(velocity);
 
     });
 
