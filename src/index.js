@@ -501,7 +501,7 @@ const createScene = () => {
             return;
         }
         oxyCtr++;
-        if (oxyCtr > 20) {
+        if (oxyCtr > 100) {
             if (guiVars.oxygen < 16) {
                 if (guiVars.oxygen == 0) {
                     guiVars.lose.isVisible = true;
@@ -520,7 +520,7 @@ const createScene = () => {
         }
         if (guiVars.poweredOn && guiVars.fuel > 0) {
             ctr++;
-            if (ctr > 20) {
+            if (ctr > 50) {
                 guiVars.fuel--;
                 guiVars.fuelGUI.text = `Fuel: ${guiVars.fuel}%`;
                 if (guiVars.fuel < 16) {
