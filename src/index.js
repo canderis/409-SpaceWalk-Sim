@@ -476,7 +476,7 @@ const createScene = () => {
     const guiVars = {
         poweredOn: false,
         returnToHome: false,
-        acceleration: 0.00001,
+        acceleration: 0.0001,
         rotationTarget: new Vector3(0, 0, 0),
         fuel: 100,
         oxygen: 100
@@ -530,24 +530,22 @@ const createScene = () => {
                 ctr = 0;
             }
 
-            const direction = camera.getForwardRay().direction;
             // direction.x = -direction.x
             // direction.z = -direction.z
             // direction.y = -direction.y
 
 
-            velocity = velocity.add(direction.scale(0.001));
-            velocity = velocity.add(velocity.scale(guiVars.acceleration))
+            
             if (!guiVars.returnToHome) {
                 rotation = rotation.add(joystick.deltaPosition.scale(0.002));
+                camera.cameraRotation = rotation;
+
             }
-            else {
-                velocity = new Vector3(0, 0, 0);
+            else {                
 
-
-                camera.position.x < spaceShip.position.x ? camera.position.x += 0.1 : camera.position.x -= 0.1;
-                camera.position.y < spaceShip.position.y ? camera.position.y += 0.1 : camera.position.y -= 0.1;
-                camera.position.z < spaceShip.position.z ? camera.position.z += 0.1 : camera.position.z -= 0.1;
+                // camera.position.x < spaceShip.position.x ? camera.position.x += 0.1 : camera.position.x -= 0.1;
+                // camera.position.y < spaceShip.position.y ? camera.position.y += 0.1 : camera.position.y -= 0.1;
+                // camera.position.z < spaceShip.position.z ? camera.position.z += 0.1 : camera.position.z -= 0.1;
 
                 let matrix = Matrix.Zero();
                 let target = new Vector3(0, 0, 0);
@@ -593,8 +591,10 @@ const createScene = () => {
 
             }
         }
+        const direction = camera.getForwardRay().direction.scale(guiVars.acceleration);
+        velocity = velocity.add(direction);
+
         guiVars.velocity += guiVars.acceleration;
-        camera.cameraRotation = rotation;
         camera.position = camera.position.add(velocity);
 
     });
