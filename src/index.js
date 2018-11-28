@@ -23,7 +23,7 @@ import FuelWarning from './assets/FuelWarning.png';
 import OxygenWarning from './assets/OxygenWarning.png';
 import NoFuel from './assets/NoFuel.png';
 
-
+import SpaceBase from './assets/HomeBase_V2.babylon';
 
 import bk1 from './assets/cwd_px.jpg';
 import bk2 from './assets/cwd_py.jpg';
@@ -459,13 +459,18 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 const createScene = () => {
     const scene = new Scene(engine);
     VirtualJoystick.canvas = canvas;
+ 
+    BABYLON.SceneLoader.Append("",SpaceBase, scene, function (scene)
+    {
+    });
+
 
     const spaceShip = MeshBuilder.CreateBox("spaceShip", { height: 5, width: 5, depth: 10 }, scene);
-    spaceShip.position.x = 100;
-    spaceShip.position.y = 100;
-    spaceShip.position.x = 100;
+    spaceShip.position.x = 0;
+    spaceShip.position.y = 0;
+    spaceShip.position.x = 0;
 
-    const camera = new FlyCamera("FlyCamera", new Vector3(0, 5, -10), scene);
+    const camera = new FlyCamera("FlyCamera", new Vector3(100, 150, -100), scene);
     camera.noRotationConstraint = true;
     camera.updateUpVectorFromRotation = true;
     camera.checkCollisions = true;
@@ -600,6 +605,8 @@ const createScene = () => {
 }
 
 const scene = createScene();
+
+
 
 engine.runRenderLoop(() => {
     scene.render();
