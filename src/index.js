@@ -466,7 +466,7 @@ const createScene = () => {
     spaceShip.position.y = 0;
     spaceShip.position.x = 0;
 
-    const camera = new FlyCamera("FlyCamera", new Vector3(100, 150, -100), scene);
+    const camera = new FlyCamera("FlyCamera", new Vector3(200, 150, -100), scene);
     camera.noRotationConstraint = true;
     camera.updateUpVectorFromRotation = true;
     camera.checkCollisions = true;
@@ -493,9 +493,9 @@ const createScene = () => {
     let oxyCtr = 0;
     const withinRange = (x, min, max) => x >= min && x <= max;
     scene.onBeforeRenderObservable.add(() => {
-        if (withinRange(camera.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
-            withinRange(camera.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
-            withinRange(camera.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) {
+        if (withinRange(camera.position.x, spaceShip.position.x - 70, spaceShip.position.x + 70) &&
+            withinRange(camera.position.y, spaceShip.position.y - 70, spaceShip.position.y + 70) &&
+            withinRange(camera.position.z, spaceShip.position.z - 70, spaceShip.position.z + 70)) {
 
             guiVars.win.isVisible = true;
             return;
