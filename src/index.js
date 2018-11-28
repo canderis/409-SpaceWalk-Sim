@@ -359,7 +359,6 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     VirtualJoystick.Canvas.style.left = '150px';
 
-
     const power = new GUI.Checkbox();
     power.isChecked = false;
     power.color = "red";
@@ -384,7 +383,6 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
         noFuel.isVisible = true;
         fuelWarning.isVisible = false;
         oxygenWarning.isVisible = false;
-
     }
 
     guiVars.fuelWarning = () => {
@@ -400,7 +398,6 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
         fuelWarning.isVisible = false;
         oxygenWarning.isVisible = true;
         noFuel.isVisible = false;
-
     }
 
 
@@ -439,7 +436,6 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
             power.color = "red";
             power.background = "red";
             returnToHome.isEnabled = false;
-
         }
     });
 
@@ -480,7 +476,6 @@ const createScene = () => {
         rotationTarget: new Vector3(0, 0, 0),
         fuel: 100,
         oxygen: 100
-
     };
 
     const joystick = buildGUI(scene, guiVars, camera, spaceShip);
@@ -526,26 +521,17 @@ const createScene = () => {
                 if (guiVars.fuel < 16) {
                     guiVars.fuelWarning();
                 }
-
                 ctr = 0;
             }
-
-            // direction.x = -direction.x
-            // direction.z = -direction.z
-            // direction.y = -direction.y
-
-
             
             if (!guiVars.returnToHome) {
                 rotation = rotation.add(joystick.deltaPosition.scale(0.002));
                 camera.cameraRotation = rotation;
-
             }
             else {                
-
-                // camera.position.x < spaceShip.position.x ? camera.position.x += 0.1 : camera.position.x -= 0.1;
-                // camera.position.y < spaceShip.position.y ? camera.position.y += 0.1 : camera.position.y -= 0.1;
-                // camera.position.z < spaceShip.position.z ? camera.position.z += 0.1 : camera.position.z -= 0.1;
+                camera.position.x < spaceShip.position.x ? camera.position.x += 0.05 : camera.position.x -= 0.05;
+                camera.position.y < spaceShip.position.y ? camera.position.y += 0.05 : camera.position.y -= 0.05;
+                camera.position.z < spaceShip.position.z ? camera.position.z += 0.05 : camera.position.z -= 0.05;
 
                 let matrix = Matrix.Zero();
                 let target = new Vector3(0, 0, 0);
@@ -572,7 +558,6 @@ const createScene = () => {
                 }
 
                 camera.rotation.z = 0;
-                // camera.cameraRotation = target;
                 guiVars.rotationTarget = target;
 
                 if (camera.rotation.x - guiVars.rotationTarget.x > .1) {
@@ -588,7 +573,6 @@ const createScene = () => {
                 else if (camera.rotation.y - guiVars.rotationTarget.y < -.1) {
                     camera.rotation.y += .01;
                 }
-
             }
         }
         const direction = camera.getForwardRay().direction.scale(guiVars.acceleration);
@@ -596,9 +580,7 @@ const createScene = () => {
 
         guiVars.velocity += guiVars.acceleration;
         camera.position = camera.position.add(velocity);
-
     });
-
 
     return scene;
 }
