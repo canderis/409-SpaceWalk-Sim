@@ -44,10 +44,10 @@ canvas.width = canvas.getBoundingClientRect().width;
 canvas.height = canvas.getBoundingClientRect().height;
 
 const buildSkybox = (scene) => {
-    const skybox = MeshBuilder.CreateBox("skyBox", {size:8192.0}, scene);
+    const skybox = MeshBuilder.CreateBox("skyBox", { size: 8192.0 }, scene);
     const skyboxMaterial = new StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new CubeTexture("assets/cwd", scene, null, null, [bk1,bk2,bk3,bk4,bk5,bk6]);
+    skyboxMaterial.reflectionTexture = new CubeTexture("assets/cwd", scene, null, null, [bk1, bk2, bk3, bk4, bk5, bk6]);
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
     skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
     skyboxMaterial.specularColor = new Color3(0, 0, 0);
@@ -61,7 +61,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     handControl.width = "400px";
     handControl.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     handControl.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    advancedTexture.addControl(handControl);  
+    advancedTexture.addControl(handControl);
 
     const homeProtocol = new GUI.Image("home-protocol", HomeProtocol);
     homeProtocol.height = "80px";
@@ -75,8 +75,8 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     win.width = "800px";
     win.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     win.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-    advancedTexture.addControl(win);    
-    win.isVisible=false;
+    advancedTexture.addControl(win);
+    win.isVisible = false;
 
     guiVars.win = win;
 
@@ -85,8 +85,8 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     lose.width = "800px";
     lose.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     lose.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-    advancedTexture.addControl(lose);    
-    lose.isVisible=false;
+    advancedTexture.addControl(lose);
+    lose.isVisible = false;
 
     guiVars.lose = lose;
 
@@ -109,14 +109,14 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     oxygenWarning.width = "800px";
     oxygenWarning.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     oxygenWarning.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    advancedTexture.addControl(oxygenWarning);     
+    advancedTexture.addControl(oxygenWarning);
 
     const powerText = new GUI.TextBlock();
     powerText.text = "Power On System";
     powerText.left = "40px";
     powerText.top = "-230px";
     powerText.marginLeft = "5px";
-    powerText.fontFamily="FuturisticArmour";
+    powerText.fontFamily = "FuturisticArmour";
 
     powerText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     powerText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
@@ -135,7 +135,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     homeText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     homeText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     homeText.color = "white";
-    homeText.fontFamily="FuturisticArmour";
+    homeText.fontFamily = "FuturisticArmour";
     advancedTexture.addControl(homeText);
 
     const throttleText = new GUI.TextBlock();
@@ -148,7 +148,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     throttleText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     throttleText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     throttleText.color = "white";
-    throttleText.fontFamily="FuturisticArmour";
+    throttleText.fontFamily = "FuturisticArmour";
     advancedTexture.addControl(throttleText);
 
 
@@ -201,7 +201,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     joystick._joystickPointerStartPos.x = 120;
     joystick._joystickPointerStartPos.y = 190;
 
-    joystick._onPointerDown = function(e) {
+    joystick._onPointerDown = function (e) {
         var positionOnScreenCondition;
         console.log(e);
 
@@ -232,13 +232,13 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
             }
         }
     }
-     joystick._drawVirtualJoystick = function() {
+    joystick._drawVirtualJoystick = function () {
         if (this.pressed) {
             this._touches.forEach((key, touch) => {
                 if (touch.pointerId === this._joystickPointerID) {
                     VirtualJoystick.vjCanvasContext.clearRect(this._joystickPointerStartPos.x - 64, this._joystickPointerStartPos.y - 64, 128, 128);
                     VirtualJoystick.vjCanvasContext.clearRect(this._joystickPreviousPointerPos.x - 42, this._joystickPreviousPointerPos.y - 42, 84, 84);
-                    joystick.init();                    
+                    joystick.init();
                     VirtualJoystick.vjCanvasContext.beginPath();
                     VirtualJoystick.vjCanvasContext.strokeStyle = this._joystickColor;
                     VirtualJoystick.vjCanvasContext.arc(this._joystickPointerPos.x, this._joystickPointerPos.y, 40, 0, Math.PI * 2, true);
@@ -261,13 +261,13 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
                 }
             });
         }
-        else{
+        else {
             // this.deltaPosition = this.deltaPosition.scale(0.9);
         }
         requestAnimationFrame(() => { this._drawVirtualJoystick(); });
     }
 
-    joystick.init = function(){
+    joystick.init = function () {
         VirtualJoystick.vjCanvasContext.beginPath();
         VirtualJoystick.vjCanvasContext.lineWidth = 6;
         VirtualJoystick.vjCanvasContext.strokeStyle = this._joystickColor;
@@ -288,7 +288,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
         if (this._joystickPointerID == e.pointerId) {
             VirtualJoystick.vjCanvasContext.clearRect(this._joystickPointerStartPos.x - 64, this._joystickPointerStartPos.y - 64, 128, 128);
-            VirtualJoystick.vjCanvasContext.clearRect(this._joystickPreviousPointerPos.x - 42, this._joystickPreviousPointerPos.y - 42, 84, 84);     
+            VirtualJoystick.vjCanvasContext.clearRect(this._joystickPreviousPointerPos.x - 42, this._joystickPreviousPointerPos.y - 42, 84, 84);
             this._joystickPointerID = -1;
             this.pressed = false;
         }
@@ -298,13 +298,13 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
                 VirtualJoystick.vjCanvasContext.clearRect(touch.prevX - 44, touch.prevY - 44, 88, 88);
             }
         }
-        
+
         joystick.init();
 
         this._touches.remove(e.pointerId.toString());
     };
 
-    joystick._onPointerMove = function(e) {
+    joystick._onPointerMove = function (e) {
         // If the current pointer is the one associated to the joystick (first touch contact)
         if (this._joystickPointerID == e.pointerId) {
             this._joystickPointerPos.x = e.offsetX;
@@ -359,12 +359,11 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     VirtualJoystick.Canvas.style.left = '150px';
 
-
     const power = new GUI.Checkbox();
     power.isChecked = false;
     power.color = "red";
     power.background = "red";
-   
+
 
     power.left = "10px";
     power.top = "-230px";
@@ -384,7 +383,6 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
         noFuel.isVisible = true;
         fuelWarning.isVisible = false;
         oxygenWarning.isVisible = false;
-
     }
 
     guiVars.fuelWarning = () => {
@@ -400,7 +398,6 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
         fuelWarning.isVisible = false;
         oxygenWarning.isVisible = true;
         noFuel.isVisible = false;
-
     }
 
 
@@ -409,17 +406,17 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     returnToHome.color = "red";
     returnToHome.background = "red";
     returnToHome.isEnabled = false;
-    returnToHome.onIsCheckedChangedObservable.add(function(value) {
+    returnToHome.onIsCheckedChangedObservable.add(function (value) {
         guiVars.returnToHome = value;
         if (value) {
             joystick.deltaPosition = joystick.deltaPosition.scale(0);
-            if(!fuelWarning.isVisible)
+            if (!fuelWarning.isVisible)
                 homeProtocol.isVisible = true;
             returnToHome.color = "green";
             returnToHome.background = "green";
         }
-        else{
-            guiVars.rotationTarget = new Vector3(0,0,0);
+        else {
+            guiVars.rotationTarget = new Vector3(0, 0, 0);
             homeProtocol.isVisible = false;
 
             returnToHome.color = "red";
@@ -427,7 +424,7 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
         }
     });
 
-    power.onIsCheckedChangedObservable.add(function(value) {
+    power.onIsCheckedChangedObservable.add(function (value) {
         guiVars.poweredOn = value;
         if (value) {
             joystick.deltaPosition = joystick.deltaPosition.scale(0);
@@ -435,11 +432,10 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
             power.color = "green";
             power.background = "green";
         }
-        else{
+        else {
             power.color = "red";
             power.background = "red";
             returnToHome.isEnabled = false;
-
         }
     });
 
@@ -481,14 +477,13 @@ const createScene = () => {
     const guiVars = {
         poweredOn: false,
         returnToHome: false,
-        acceleration: 0.00001,
-        rotationTarget: new Vector3(0,0,0),
+        acceleration: 0.0001,
+        rotationTarget: new Vector3(0, 0, 0),
         fuel: 100,
         oxygen: 100
-
     };
 
-    const joystick = buildGUI(scene, guiVars,camera, spaceShip);
+    const joystick = buildGUI(scene, guiVars, camera, spaceShip);
     buildSkybox(scene);
     let rotation = new Vector3(0.001, 0.002, 0.003);
     let velocity = new Vector3(0.01, 0.02, 0.03);
@@ -499,19 +494,19 @@ const createScene = () => {
     const withinRange = (x, min, max) => x >= min && x <= max;
     scene.onBeforeRenderObservable.add(() => {
         if (withinRange(camera.position.x, spaceShip.position.x - 10.5, spaceShip.position.x + 10.5) &&
-                    withinRange(camera.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
-                    withinRange(camera.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) {
-            
-                guiVars.win.isVisible = true;
-                return;
+            withinRange(camera.position.y, spaceShip.position.y - 5, spaceShip.position.y + 5) &&
+            withinRange(camera.position.z, spaceShip.position.z - 5, spaceShip.position.z + 5)) {
+
+            guiVars.win.isVisible = true;
+            return;
         }
         oxyCtr++;
-        if(oxyCtr > 20){
-            if(guiVars.oxygen < 16){
-                if(guiVars.oxygen == 0){
+        if (oxyCtr > 100) {
+            if (guiVars.oxygen < 16) {
+                if (guiVars.oxygen == 0) {
                     guiVars.lose.isVisible = true;
                     return;
-                }else{
+                } else {
                     guiVars.oxygenWarning();
 
                 }
@@ -520,86 +515,77 @@ const createScene = () => {
             guiVars.oxygen--;
             guiVars.oxygenGUI.text = `Oxygen: ${guiVars.oxygen}%`;
         }
-        if(guiVars.fuel == 0){
+        if (guiVars.fuel == 0) {
             guiVars.noFuel();
         }
-        if(guiVars.poweredOn && guiVars.fuel > 0) {
+        if (guiVars.poweredOn && guiVars.fuel > 0) {
             ctr++;
-            if(ctr > 20){
+            if (ctr > 50) {
                 guiVars.fuel--;
                 guiVars.fuelGUI.text = `Fuel: ${guiVars.fuel}%`;
-                if(guiVars.fuel < 16){
+                if (guiVars.fuel < 16) {
                     guiVars.fuelWarning();
                 }
-
-                ctr=0;
-            } 
-
-            velocity = velocity.add(camera.upVector.scale(0.0001));
-            velocity = velocity.add(velocity.scale(guiVars.acceleration))
-            if(!guiVars.returnToHome){
-                rotation = rotation.add(joystick.deltaPosition.scale(0.002));
+                ctr = 0;
             }
-            else{
-                velocity = new Vector3(0, 0 ,0);
-                
+            
+            if (!guiVars.returnToHome) {
+                rotation = rotation.add(joystick.deltaPosition.scale(0.002));
+                camera.cameraRotation = rotation;
+            }
+            else {                
+                camera.position.x < spaceShip.position.x ? camera.position.x += 0.05 : camera.position.x -= 0.05;
+                camera.position.y < spaceShip.position.y ? camera.position.y += 0.05 : camera.position.y -= 0.05;
+                camera.position.z < spaceShip.position.z ? camera.position.z += 0.05 : camera.position.z -= 0.05;
 
-                    camera.position.x < spaceShip.position.x ? camera.position.x += 0.1 : camera.position.x -= 0.1;
-                    camera.position.y < spaceShip.position.y ? camera.position.y += 0.1 : camera.position.y -= 0.1;
-                    camera.position.z < spaceShip.position.z ? camera.position.z += 0.1 : camera.position.z -= 0.1;
-                    
-                    let matrix = Matrix.Zero();
-                    let target = new Vector3(0,0,0);
+                let matrix = Matrix.Zero();
+                let target = new Vector3(0, 0, 0);
 
-                    Matrix.LookAtLHToRef(camera.position, spaceShip.position, Vector3.Up(), matrix);
-                    matrix.invert();
+                Matrix.LookAtLHToRef(camera.position, spaceShip.position, Vector3.Up(), matrix);
+                matrix.invert();
 
-                    target.x = Math.atan(matrix.m[6] / matrix.m[10]);
+                target.x = Math.atan(matrix.m[6] / matrix.m[10]);
 
-                    var vDir = spaceShip.position.subtract(camera.position);
+                var vDir = spaceShip.position.subtract(camera.position);
 
-                    if (vDir.x >= 0.0) {
-                        target.y = (-Math.atan(vDir.z / vDir.x) + Math.PI / 2.0);
-                    } else {
-                        target.y = (-Math.atan(vDir.z / vDir.x) - Math.PI / 2.0);
-                    }
+                if (vDir.x >= 0.0) {
+                    target.y = (-Math.atan(vDir.z / vDir.x) + Math.PI / 2.0);
+                } else {
+                    target.y = (-Math.atan(vDir.z / vDir.x) - Math.PI / 2.0);
+                }
 
-                    if (isNaN(target.x)) {
-                        target.x = 0;
-                    }
+                if (isNaN(target.x)) {
+                    target.x = 0;
+                }
 
-                    if (isNaN(target.y)) {
-                        target.y = 0;
-                    }
+                if (isNaN(target.y)) {
+                    target.y = 0;
+                }
 
-                    camera.rotation.z = 0;
-                    // camera.cameraRotation = target;
-                    guiVars.rotationTarget = target;
+                camera.rotation.z = 0;
+                guiVars.rotationTarget = target;
 
-                    if( camera.rotation.x - guiVars.rotationTarget.x > .1){
-                        camera.rotation.x-=.01;
-                    }
-                    else if( camera.rotation.x - guiVars.rotationTarget.x < -.1)
-                    {
-                        camera.rotation.x+=.01;
-                    }
-    
-                    if( camera.rotation.y - guiVars.rotationTarget.y > .1){
-                        camera.rotation.y-=.01;
-                    }
-                    else if( camera.rotation.y - guiVars.rotationTarget.y < -.1)
-                    {
-                        camera.rotation.y+=.01;
-                    }
-                
+                if (camera.rotation.x - guiVars.rotationTarget.x > .1) {
+                    camera.rotation.x -= .01;
+                }
+                else if (camera.rotation.x - guiVars.rotationTarget.x < -.1) {
+                    camera.rotation.x += .01;
+                }
+
+                if (camera.rotation.y - guiVars.rotationTarget.y > .1) {
+                    camera.rotation.y -= .01;
+                }
+                else if (camera.rotation.y - guiVars.rotationTarget.y < -.1) {
+                    camera.rotation.y += .01;
+                }
             }
         }
-        guiVars.velocity+=guiVars.acceleration;
-        camera.cameraRotation = rotation;
+        const direction = camera.getForwardRay().direction.scale(guiVars.acceleration);
+        velocity = velocity.add(direction);
+
+        guiVars.velocity += guiVars.acceleration;
         camera.position = camera.position.add(velocity);
-
     });
-
 
     return scene;
 }
