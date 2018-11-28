@@ -530,7 +530,13 @@ const createScene = () => {
                 ctr = 0;
             }
 
-            velocity = velocity.add(camera.upVector.scale(0.0001));
+            const direction = camera.getForwardRay().direction;
+            // direction.x = -direction.x
+            // direction.z = -direction.z
+            // direction.y = -direction.y
+
+
+            velocity = velocity.add(direction.scale(0.001));
             velocity = velocity.add(velocity.scale(guiVars.acceleration))
             if (!guiVars.returnToHome) {
                 rotation = rotation.add(joystick.deltaPosition.scale(0.002));
