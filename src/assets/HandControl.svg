@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="495px" height="318px" viewBox="0 0 495 318" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+<svg width="480px" height="303px" viewBox="0 0 480 303" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
     <title>HandControl</title>
     <desc>Created with Sketch.</desc>
     <defs>
-        <path d="M0,0 L455,0 C477.09139,-4.05812251e-15 495,17.90861 495,40 L495,320 L0,320 L0,0 Z" id="path-1"></path>
-        <filter x="-6.3%" y="-9.7%" width="112.5%" height="119.4%" filterUnits="objectBoundingBox" id="filter-2">
+        <path d="M0,0 L440,0 C462.09139,-4.05812251e-15 480,17.90861 480,40 L480,305 L0,305 L0,0 Z" id="path-1"></path>
+        <filter x="-6.5%" y="-10.2%" width="112.9%" height="120.3%" filterUnits="objectBoundingBox" id="filter-2">
             <feMorphology radius="13" operator="erode" in="SourceAlpha" result="shadowSpreadInner1"></feMorphology>
             <feGaussianBlur stdDeviation="24.5" in="shadowSpreadInner1" result="shadowBlurInner1"></feGaussianBlur>
             <feOffset dx="0" dy="0" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
             <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.716343976 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
         </filter>
-        <path d="M0,20 L435,20 C457.09139,20 475,37.90861 475,60 L475,320 L0,320 L0,20 Z" id="path-3"></path>
-        <filter x="-0.7%" y="-1.2%" width="101.5%" height="102.3%" filterUnits="objectBoundingBox" id="filter-4">
-            <feGaussianBlur stdDeviation="3" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+        <path d="M0,5 L435,5 C457.09139,5 475,22.90861 475,45 L475,305 L0,305 L0,5 Z" id="path-3"></path>
+        <filter x="-0.8%" y="-1.3%" width="101.7%" height="102.7%" filterUnits="objectBoundingBox" id="filter-4">
+            <feMorphology radius="1" operator="erode" in="SourceAlpha" result="shadowSpreadInner1"></feMorphology>
+            <feGaussianBlur stdDeviation="3" in="shadowSpreadInner1" result="shadowBlurInner1"></feGaussianBlur>
             <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
             <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
             <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
         </filter>
     </defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Desktop-HD" transform="translate(0.000000, -706.000000)" fill-rule="nonzero">
-            <g id="HandControl" transform="translate(0.000000, 706.000000)">
+        <g id="Desktop-HD" transform="translate(0.000000, -721.000000)" fill-rule="nonzero">
+            <g id="HandControl" transform="translate(0.000000, 721.000000)">
                 <g id="Rectangle">
                     <use fill="#D8D8D8" xlink:href="#path-1"></use>
                     <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
