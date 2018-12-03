@@ -615,14 +615,13 @@ const createScene = () => {
         const direction = camera.getForwardRay().direction.scale(guiVars.acceleration);
         velocity = velocity.add(direction);
 
-
         guiVars.velocity += guiVars.acceleration;
         //guiVars.velocity.set(velocity.x + velocity.acceleration, velocity.y + guiVars.acceleration, velocity.z + guiVars.acceleration);
         
-        guiVars.axes = direction;
-        guiVars.rollGUI.text = `roll: ${guiVars.axes.x}`;  
-        guiVars.pitchGUI.text = `pitch: ${guiVars.axes.y}`;
-        guiVars.yawGUI.text = `yaw: ${guiVars.axes.z}`; 
+        guiVars.axes = camera.rotation;
+        guiVars.rollGUI.text = `roll: ${guiVars.axes.x.toFixed(2)}`;  
+        guiVars.pitchGUI.text = `pitch: ${guiVars.axes.y.toFixed(2)}`;
+        guiVars.yawGUI.text = `yaw: ${guiVars.axes.z.toFixed(2)}`; 
 
         camera.position = camera.position.add(velocity);
     });
