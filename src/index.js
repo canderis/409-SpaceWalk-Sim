@@ -17,6 +17,8 @@ import {
     Matrix
 } from 'babylonjs';
 
+import './favicons/favicons';
+
 import HandControl from './assets/HandControl.svg';
 import HomeProtocol from './assets/HomeProtocol.png';
 import FuelWarning from './assets/FuelWarning.png';
