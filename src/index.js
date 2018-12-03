@@ -178,7 +178,35 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
 
     // fuel.fontFamily="FuturisticArmour";
 
+    const roll = new GUI.TextBlock();
+    guiVars.rollGUI = roll;
+    roll.text = `Roll: ${guiVars.axes.x}`;
+    roll.top = "50px";
+    roll.left = "-10px";
+    roll.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    roll.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    roll.color = "white";
+    advancedTexture.addControl(roll);
 
+    const pitch = new GUI.TextBlock();
+    guiVars.pitchGUI = pitch;
+    pitch.text = `Pitch: ${guiVars.axes.y}`;
+    pitch.top = "70px";
+    pitch.left = "-10px";
+    pitch.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    pitch.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    pitch.color = "white";
+    advancedTexture.addControl(pitch);
+
+    const yaw = new GUI.TextBlock();
+    guiVars.yawGUI = yaw;
+    yaw.text = `Yaw: ${guiVars.axes.z}`;
+    yaw.top = "90px";
+    yaw.left = "-10px";
+    yaw.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    yaw.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    yaw.color = "white";
+    advancedTexture.addControl(yaw);
 
     const slider = new GUI.Slider();
     slider.minimum = 0.1;
@@ -482,7 +510,9 @@ const createScene = () => {
         acceleration: 0.0001,
         rotationTarget: new Vector3(0, 0, 0),
         fuel: 100,
-        oxygen: 100
+        oxygen: 100,
+        velocity: new Vector3(0, 0, 0),
+        axes: new Vector3(0, 0, 0)
     };
 
     const joystick = buildGUI(scene, guiVars, camera, spaceShip);
@@ -585,7 +615,15 @@ const createScene = () => {
         const direction = camera.getForwardRay().direction.scale(guiVars.acceleration);
         velocity = velocity.add(direction);
 
+
         guiVars.velocity += guiVars.acceleration;
+        //guiVars.velocity.set(velocity.x + velocity.acceleration, velocity.y + guiVars.acceleration, velocity.z + guiVars.acceleration);
+        
+        guiVars.axes = direction;
+        guiVars.rollGUI.text = `roll: ${guiVars.axes.x}`;  
+        guiVars.pitchGUI.text = `pitch: ${guiVars.axes.y}`;
+        guiVars.yawGUI.text = `yaw: ${guiVars.axes.z}`; 
+
         camera.position = camera.position.add(velocity);
     });
 
