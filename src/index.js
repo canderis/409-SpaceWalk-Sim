@@ -492,8 +492,8 @@ const createScene = () => {
     {
     });
 
-
-    const spaceShip = MeshBuilder.CreateBox("spaceShip", { height: 5, width: 5, depth: 10 }, scene);
+    //This is just the box that is centered at the base for the math to work
+    const spaceShip = MeshBuilder.CreateBox("spaceShip", { height: 0, width: 0, depth: 0 }, scene);
     spaceShip.position.x = 0;
     spaceShip.position.y = 0;
     spaceShip.position.x = 0;
