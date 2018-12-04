@@ -619,27 +619,29 @@ const createScene = () => {
 
                 let accelerate= true;
 
-                if(resQ.x > targetQ.x - .03){
-                    if(rotationVelocity._pitchfactor > -.005){
+                let xThresh = resQ.x - targetQ.x;
+                if( xThresh > -.03){
+                    if(rotationVelocity._pitchfactor > -.1*xThresh){
                         rotationVelocity._pitchfactor-=0.0001;
                         accelerate= false;
                     }
                 }
-                else if(resQ.x < targetQ.x + .03){
-                    if(rotationVelocity._pitchfactor < .005){
+                else if(xThresh < .03){
+                    if(rotationVelocity._pitchfactor < -.1*xThresh){
                         rotationVelocity._pitchfactor+=0.0001;
                         accelerate= false;
                     }
                 }
 
-                if(resQ.y > targetQ.y - .03){
-                    if(rotationVelocity._yawfactor > -.005){
+                let yThresh = resQ.y - targetQ.y;
+                if(yThresh > - .03 ){
+                    if(rotationVelocity._yawfactor > -.1*yThresh){
                         rotationVelocity._yawfactor-=0.0001;
                         accelerate= false;
                     }
                 }
-                else if(resQ.y < targetQ.y + .03){
-                    if(rotationVelocity._yawfactor < .005){
+                else if(yThresh < .03 ){
+                    if(rotationVelocity._yawfactor < -.1*yThresh){
                         rotationVelocity._yawfactor+=0.0001;
                         accelerate= false;
                     }
@@ -656,7 +658,6 @@ const createScene = () => {
 
                 if(accelerate){
                     acceleration = .0002;
-                    console.log("accelerating");
                 }
                 else{
                     acceleration = 0;
