@@ -575,14 +575,6 @@ const createScene = () => {
         
         if (guiVars.poweredOn && guiVars.fuel > 0) {
             ctr++;
-            if (ctr > 50) {
-                guiVars.fuel--;
-                guiVars.fuelGUI.text = `Fuel: ${guiVars.fuel}%`;
-                if (guiVars.fuel < 16) {
-                    guiVars.fuelWarning();
-                }
-                ctr = 0;
-            }
             
             if (!guiVars.returnToHome) {
                 console.log(joystick.deltaPosition)
@@ -617,42 +609,67 @@ const createScene = () => {
                 if (isNaN(target.y)) {
                     target.y = 0;
                 }
+                
+                target.z = 0;
 
                 guiVars.rotationTarget = target;
                 
-                //camera.rotationQuaternion = 
                 let targetQ = Quaternion.RotationYawPitchRoll(target.y, target.x, target.z);
                 resQ = camera.rotationQuaternion;
 
-                if(resQ.x > targetQ.x - .01){
-                    if(rotationVelocity._pitchfactor > -.001)
+                let accelerate= true;
+
+                if(resQ.x > targetQ.x - .03){
+                    if(rotationVelocity._pitchfactor > -.005){
                         rotationVelocity._pitchfactor-=0.0001;
+                        accelerate= false;
+                    }
                 }
-                else if(resQ.x < targetQ.x + .01){
-                    if(rotationVelocity._pitchfactor < .001)
+                else if(resQ.x < targetQ.x + .03){
+                    if(rotationVelocity._pitchfactor < .005){
                         rotationVelocity._pitchfactor+=0.0001;
+                        accelerate= false;
+                    }
                 }
 
-                if(resQ.y > targetQ.y - .01){
-                    if(rotationVelocity._yawfactor > -.001)
+                if(resQ.y > targetQ.y - .03){
+                    if(rotationVelocity._yawfactor > -.005){
                         rotationVelocity._yawfactor-=0.0001;
+                        accelerate= false;
+                    }
                 }
-                else if(resQ.y < targetQ.y + .01){
-                    if(rotationVelocity._yawfactor < .001)
+                else if(resQ.y < targetQ.y + .03){
+                    if(rotationVelocity._yawfactor < .005){
                         rotationVelocity._yawfactor+=0.0001;
+                        accelerate= false;
+                    }
                 }
 
                 if(resQ.z > targetQ.z - .01){
-                    if(rotationVelocity._rollfactor > -.001)
+                    if(rotationVelocity._rollfactor > -.0001)
                         rotationVelocity._rollfactor-=0.0001;
                 }
                 else if(resQ.z < targetQ.z + .01){
-                    if(rotationVelocity._rollfactor < .001)
+                    if(rotationVelocity._rollfactor < .0001)
                         rotationVelocity._rollfactor+=0.0001;
                 }
-                //TODO: Fix!!
 
-                //console.log(resQ, rotationVelocity);
+                if(accelerate){
+                    acceleration = .0002;
+                    console.log("accelerating");
+                }
+                else{
+                    acceleration = 0;
+                }
+            }
+
+            if (ctr*1000*acceleration > 80) {
+                guiVars.fuel--;
+                guiVars.fuelGUI.text = `Fuel: ${guiVars.fuel}%`;
+                if (guiVars.fuel < 16) {
+                    guiVars.fuelWarning();
+                }
+                ctr = 0;
             }
         }
         const direction = camera.getForwardRay().direction.scale(acceleration);
@@ -664,6 +681,7 @@ const createScene = () => {
         guiVars.rollGUI.text = `roll: ${(rotationVelocity._rollfactor*1000).toFixed(2)}`;  
         guiVars.pitchGUI.text = `pitch: ${(rotationVelocity._pitchfactor*1000).toFixed(2)}`;
         guiVars.yawGUI.text = `yaw: ${(rotationVelocity._yawfactor*1000).toFixed(2)}`; 
+
 
     });
 
