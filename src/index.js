@@ -622,43 +622,42 @@ const createScene = () => {
                 
                 //camera.rotationQuaternion = 
                 let targetQ = Quaternion.RotationYawPitchRoll(target.y, target.x, target.z);
-                resQ = camera.rotationQuaternion.add(targetQ.scale(.001)).toEulerAngles();
+                resQ = camera.rotationQuaternion;
 
-                if(resQ.x > rotationVelocity._pitch - .001){
+                if(resQ.x > targetQ.x - .01){
                     if(rotationVelocity._pitchfactor > -.001)
                         rotationVelocity._pitchfactor-=0.0001;
                 }
-                else if(resQ.x < rotationVelocity._pitch + .001){
+                else if(resQ.x < targetQ.x + .01){
                     if(rotationVelocity._pitchfactor < .001)
                         rotationVelocity._pitchfactor+=0.0001;
                 }
 
-                if(resQ.y > rotationVelocity._yaw - .001){
+                if(resQ.y > targetQ.y - .01){
                     if(rotationVelocity._yawfactor > -.001)
                         rotationVelocity._yawfactor-=0.0001;
                 }
-                else if(resQ.y < rotationVelocity._yaw + .001){
+                else if(resQ.y < targetQ.y + .01){
                     if(rotationVelocity._yawfactor < .001)
                         rotationVelocity._yawfactor+=0.0001;
                 }
 
-                if(resQ.z > rotationVelocity._roll - .001){
+                if(resQ.z > targetQ.z - .01){
                     if(rotationVelocity._rollfactor > -.001)
                         rotationVelocity._rollfactor-=0.0001;
                 }
-                else if(resQ.z < rotationVelocity._roll + .001){
+                else if(resQ.z < targetQ.z + .01){
                     if(rotationVelocity._rollfactor < .001)
                         rotationVelocity._rollfactor+=0.0001;
                 }
                 //TODO: Fix!!
 
-                console.log(resQ, rotationVelocity);
+                //console.log(resQ, rotationVelocity);
             }
         }
         const direction = camera.getForwardRay().direction.scale(acceleration);
         velocity = velocity.add(direction);
         camera.position = camera.position.add(velocity);
-
         camera.rotationQuaternion = Quaternion.RotationYawPitchRoll(rotationVelocity.yaw, rotationVelocity.pitch, rotationVelocity.roll);
 
         guiVars.axes = camera.rotation;
