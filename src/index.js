@@ -223,7 +223,6 @@ const buildGUI = (scene, guiVars) => {
     slider.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     slider.onValueChangedObservable.add(function (value) {
         guiVars.acceleration = 0.00001 * value;
-        console.log(guiVars)
     });
     advancedTexture.addControl(slider);
 
@@ -234,7 +233,6 @@ const buildGUI = (scene, guiVars) => {
 
     joystick._onPointerDown = function (e) {
         var positionOnScreenCondition;
-        console.log(e);
 
         e.preventDefault();
 
@@ -495,201 +493,196 @@ const createScene = () => {
     camera.checkCollisions = true;
 
 
- 
-BABYLON.SceneLoader.Append("",SpaceBase, scene, function (scene){
+    
+    BABYLON.SceneLoader.Append("",SpaceBase, scene, function (scene){
 
-    //This is just the box that is centered at the base for the math to work
-    var sunlight = new HemisphericLight("sunlight", new Vector3(-1, -10, -4), scene);
-    sunlight.groundColor = new BABYLON.Color3(0.1, 0.15, 0.25);
+        //This is just the box that is centered at the base for the math to work
+        var sunlight = new HemisphericLight("sunlight", new Vector3(-1, -10, -4), scene);
+        sunlight.groundColor = new BABYLON.Color3(0.1, 0.15, 0.25);
 
-    const guiVars = {
-        poweredOn: false,
-        returnToHome: false,
-        acceleration: 0,
-        rotationTarget: new Vector3(0, 0, 0),
-        fuel: 100,
-        oxygen: 100,
-        velocity: new Vector3(0, 0, 0),
-        axes: new Vector3(0, 0, 0)
-    };
+        const guiVars = {
+            poweredOn: false,
+            returnToHome: false,
+            acceleration: 0,
+            rotationTarget: new Vector3(0, 0, 0),
+            fuel: 100,
+            oxygen: 100,
+            velocity: new Vector3(0, 0, 0),
+            axes: new Vector3(0, 0, 0)
+        };
 
-    const joystick = buildGUI(scene, guiVars);
-    buildSkybox(scene);
-    // camera.rotation = camera.rotation.add(new Vector3(0.01, 1, 1));
-    let velocity = new Vector3(0.01, 0.02, 0.03);
-    camera.rotationQuaternion = new BABYLON.Quaternion(0, 0, 0, 0);
+        const joystick = buildGUI(scene, guiVars);
+        buildSkybox(scene);
+        // camera.rotation = camera.rotation.add(new Vector3(0.01, 1, 1));
+        let velocity = new Vector3(0.01, 0.02, 0.03);
+        camera.rotationQuaternion = new BABYLON.Quaternion(0, 0, 0, 0);
 
-    // Game Loop
-    let ctr = 0;
-    let oxyCtr = 0;
-    const withinRange = (x, min, max) => x >= min && x <= max;
-    let rotationVelocity = {
-        _yaw: 0.000,
-        _pitch: 0.000,
-        _roll: 0.000,
-        _yawfactor: -0.00020,
-        _pitchfactor: 0.00005,
-        _rollfactor: 0.00,
+        // Game Loop
+        let ctr = 0;
+        let oxyCtr = 0;
+        const withinRange = (x, min, max) => x >= min && x <= max;
+        let rotationVelocity = {
+            _yaw: 0.000,
+            _pitch: 0.000,
+            _roll: 0.000,
+            _yawfactor: -0.00020,
+            _pitchfactor: 0.00005,
+            _rollfactor: 0.00,
 
-        get yaw() {return this._yaw+=this._yawfactor},
-        get pitch() {return this._pitch+=this._pitchfactor},
-        get roll() {return this._roll+=this._rollfactor},
-        add(vector) {
-            this._pitchfactor+= vector.x;
-            this._yawfactor+= -1 * vector.y;
-        }
-    };
-
-    let iss = scene.meshes[0];
-    iss.position = new Vector3(100, 100, 300);
-    scene.onBeforeRenderObservable.add(() => {    
-        iss.rotate(new Vector3(0.1, 0.1, 0), 0.0005 );
-        iss.position.add(iss.position.scale(0.004,0.001,0))
-
-        if (withinRange(camera.position.x, iss.position.x - 70, iss.position.x + 70) &&
-            withinRange(camera.position.y, iss.position.y - 70, iss.position.y + 70) &&
-            withinRange(camera.position.z, iss.position.z - 70, iss.position.z + 70)) {
-
-            guiVars.win.isVisible = true;
-            return;
-        }
-        oxyCtr++;
-        if (oxyCtr > 100) {
-            if (guiVars.oxygen < 16) {
-                if (guiVars.oxygen == 0) {
-                    guiVars.lose.isVisible = true;
-                    return;
-                } else {
-                    guiVars.oxygenWarning();
-
-                }
+            get yaw() {return this._yaw+=this._yawfactor},
+            get pitch() {return this._pitch+=this._pitchfactor},
+            get roll() {return this._roll+=this._rollfactor},
+            add(vector) {
+                this._pitchfactor+= vector.x;
+                this._yawfactor+= -1 * vector.y;
             }
-            oxyCtr = 0;
-            guiVars.oxygen--;
-            guiVars.oxygenGUI.text = `Oxygen: ${guiVars.oxygen}%`;
-        }
-        if (guiVars.fuel == 0) {
-            guiVars.noFuel();
-        }
+        };
 
-        let acceleration = guiVars.acceleration;
-        let resQ = false;
-        
-        if (guiVars.poweredOn && guiVars.fuel > 0) {
-            ctr++;
+        let iss = scene.meshes[0];
+        iss.position = new Vector3(100, 100, 300);
+        scene.onBeforeRenderObservable.add(() => {    
+            iss.rotate(new Vector3(0, 0.1, 0.1), 0.0005 );
+            iss.position.add(iss.position.scale(0.004,0.001,0))
+
+            if (withinRange(camera.position.x, iss.position.x - 70, iss.position.x + 70) &&
+                withinRange(camera.position.y, iss.position.y - 70, iss.position.y + 70) &&
+                withinRange(camera.position.z, iss.position.z - 70, iss.position.z + 70)) {
+
+                guiVars.win.isVisible = true;
+                return;
+            }
+            oxyCtr++;
+            if (oxyCtr > 100) {
+                if (guiVars.oxygen < 16) {
+                    if (guiVars.oxygen == 0) {
+                        guiVars.lose.isVisible = true;
+                        return;
+                    } else {
+                        guiVars.oxygenWarning();
+
+                    }
+                }
+                oxyCtr = 0;
+                guiVars.oxygen--;
+                guiVars.oxygenGUI.text = `Oxygen: ${guiVars.oxygen}%`;
+            }
+            if (guiVars.fuel == 0) {
+                guiVars.noFuel();
+            }
+
+            let acceleration = guiVars.acceleration;
+            let resQ = false;
             
-            if (!guiVars.returnToHome) {
-                console.log(joystick.deltaPosition)
-                rotationVelocity.add(joystick.deltaPosition.scale(0.00005));
-                acceleration = acceleration + .0001;
-            }
-            else {                
-                camera.position.x < iss.position.x ? camera.position.x += 0.05 : camera.position.x -= 0.05;
-                camera.position.y < iss.position.y ? camera.position.y += 0.05 : camera.position.y -= 0.05;
-                camera.position.z < iss.position.z ? camera.position.z += 0.05 : camera.position.z -= 0.05;
-
-                let matrix = Matrix.Zero();
-                let target = new Vector3(0, 0, 0);
-
-                Matrix.LookAtLHToRef(camera.position, iss.position, Vector3.Up(), matrix);
-                matrix.invert();
-
-                target.x = Math.atan(matrix.m[6] / matrix.m[10]);
-
-                var vDir = iss.position.subtract(camera.position);
-
-                if (vDir.x >= 0.0) {
-                    target.y = (-Math.atan(vDir.z / vDir.x) + Math.PI / 2.0);
-                } else {
-                    target.y = (-Math.atan(vDir.z / vDir.x) - Math.PI / 2.0);
-                }
-
-                if (isNaN(target.x)) {
-                    target.x = 0;
-                }
-
-                if (isNaN(target.y)) {
-                    target.y = 0;
-                }
+            if (guiVars.poweredOn && guiVars.fuel > 0) {
+                ctr++;
                 
-                target.z = 0;
+                if (!guiVars.returnToHome) {
+                    rotationVelocity.add(joystick.deltaPosition.scale(0.00005));
+                    acceleration = acceleration + .0001;
+                }
+                else {                
+                    camera.position.x < iss.position.x ? camera.position.x += 0.05 : camera.position.x -= 0.05;
+                    camera.position.y < iss.position.y ? camera.position.y += 0.05 : camera.position.y -= 0.05;
+                    camera.position.z < iss.position.z ? camera.position.z += 0.05 : camera.position.z -= 0.05;
 
-                guiVars.rotationTarget = target;
-                
-                let targetQ = Quaternion.RotationYawPitchRoll(target.y, target.x, target.z);
-                resQ = camera.rotationQuaternion;
+                    let matrix = Matrix.Zero();
+                    let target = new Vector3(0, 0, 0);
 
-                let accelerate= true;
+                    Matrix.LookAtLHToRef(camera.position, iss.position, Vector3.Up(), matrix);
+                    matrix.invert();
 
-                let xThresh = resQ.x - targetQ.x;
-                console.log(xThresh);
-                if( xThresh > .03){
-                    if(rotationVelocity._pitchfactor > -0.01*xThresh){
-                        rotationVelocity._pitchfactor-=0.0001;
-                        accelerate= false;
+                    target.x = Math.atan(matrix.m[6] / matrix.m[10]);
+
+                    var vDir = iss.position.subtract(camera.position);
+
+                    if (vDir.x >= 0.0) {
+                        target.y = (-Math.atan(vDir.z / vDir.x) + Math.PI / 2.0);
+                    } else {
+                        target.y = (-Math.atan(vDir.z / vDir.x) - Math.PI / 2.0);
+                    }
+
+                    if (isNaN(target.x)) {
+                        target.x = 0;
+                    }
+
+                    if (isNaN(target.y)) {
+                        target.y = 0;
+                    }
+                    
+                    target.z = 0;
+
+                    guiVars.rotationTarget = target;
+                    
+                    let targetQ = Quaternion.RotationYawPitchRoll(target.y, target.x, target.z);
+                    resQ = camera.rotationQuaternion;
+
+                    let accelerate= true;
+
+                    let xThresh = resQ.x - targetQ.x;
+                    if( xThresh > .03){
+                        if(rotationVelocity._pitchfactor > -0.01*xThresh){
+                            rotationVelocity._pitchfactor-=0.0001;
+                            accelerate= false;
+                        }
+                    }
+                    else if(xThresh < -.03){
+                        if(rotationVelocity._pitchfactor < -0.01*xThresh){
+                            rotationVelocity._pitchfactor+=0.0001;
+                            accelerate= false;
+                        }
+                    }
+
+                    let yThresh = resQ.y - targetQ.y;
+                    if(yThresh > .03 ){
+                        if(rotationVelocity._yawfactor > -0.01*yThresh){
+                            rotationVelocity._yawfactor-=0.0001;
+                            accelerate= false;
+                        }
+                    }
+                    else if(yThresh < -.03 ){
+                        if(rotationVelocity._yawfactor < -0.01*yThresh){
+                            rotationVelocity._yawfactor+=0.0001;
+                            accelerate= false;
+                        }
+                    }
+
+                    if(resQ.z > targetQ.z - .01){
+                        if(rotationVelocity._rollfactor > -.0001)
+                            rotationVelocity._rollfactor-=0.0001;
+                    }
+                    else if(resQ.z < targetQ.z + .01){
+                        if(rotationVelocity._rollfactor < .0001)
+                            rotationVelocity._rollfactor+=0.0001;
+                    }
+
+                    if(accelerate){
+                        acceleration = .0002;
+                    }
+                    else{
+                        acceleration = 0;
                     }
                 }
-                else if(xThresh < -.03){
-                    if(rotationVelocity._pitchfactor < -0.01*xThresh){
-                        rotationVelocity._pitchfactor+=0.0001;
-                        accelerate= false;
-                    }
-                }
 
-                let yThresh = resQ.y - targetQ.y;
-                console.log(xThresh);
-                if(yThresh > .03 ){
-                    if(rotationVelocity._yawfactor > -0.01*yThresh){
-                        rotationVelocity._yawfactor-=0.0001;
-                        accelerate= false;
+                if (ctr*1000*acceleration > 80) {
+                    guiVars.fuel--;
+                    guiVars.fuelGUI.text = `Fuel: ${guiVars.fuel}%`;
+                    if (guiVars.fuel < 16) {
+                        guiVars.fuelWarning();
                     }
-                }
-                else if(yThresh < -.03 ){
-                    if(rotationVelocity._yawfactor < -0.01*yThresh){
-                        rotationVelocity._yawfactor+=0.0001;
-                        accelerate= false;
-                    }
-                }
-
-                if(resQ.z > targetQ.z - .01){
-                    if(rotationVelocity._rollfactor > -.0001)
-                        rotationVelocity._rollfactor-=0.0001;
-                }
-                else if(resQ.z < targetQ.z + .01){
-                    if(rotationVelocity._rollfactor < .0001)
-                        rotationVelocity._rollfactor+=0.0001;
-                }
-
-                if(accelerate){
-                    acceleration = .0002;
-                }
-                else{
-                    acceleration = 0;
+                    ctr = 0;
                 }
             }
+            const direction = camera.getForwardRay().direction.scale(acceleration);
+            velocity = velocity.add(direction);
+            camera.position = camera.position.add(velocity);
+            camera.rotationQuaternion = Quaternion.RotationYawPitchRoll(rotationVelocity.yaw, rotationVelocity.pitch, rotationVelocity.roll);
 
-            if (ctr*1000*acceleration > 80) {
-                guiVars.fuel--;
-                guiVars.fuelGUI.text = `Fuel: ${guiVars.fuel}%`;
-                if (guiVars.fuel < 16) {
-                    guiVars.fuelWarning();
-                }
-                ctr = 0;
-            }
-        }
-        const direction = camera.getForwardRay().direction.scale(acceleration);
-        velocity = velocity.add(direction);
-        camera.position = camera.position.add(velocity);
-        camera.rotationQuaternion = Quaternion.RotationYawPitchRoll(rotationVelocity.yaw, rotationVelocity.pitch, rotationVelocity.roll);
-
-        guiVars.axes = camera.rotation;
-        guiVars.rollGUI.text = `Roll: ${(rotationVelocity._rollfactor*1000).toFixed(2)}`;  
-        guiVars.pitchGUI.text = `Pitch: ${(rotationVelocity._pitchfactor*1000).toFixed(2)}`;
-        guiVars.yawGUI.text = `Yaw: ${(rotationVelocity._yawfactor*1000).toFixed(2)}`; 
-
-
+            guiVars.axes = camera.rotation;
+            guiVars.rollGUI.text = `Roll: ${(rotationVelocity._rollfactor*1000).toFixed(2)}`;  
+            guiVars.pitchGUI.text = `Pitch: ${(rotationVelocity._pitchfactor*1000).toFixed(2)}`;
+            guiVars.yawGUI.text = `Yaw: ${(rotationVelocity._yawfactor*1000).toFixed(2)}`;
+        });
     });
-});
 
 
     return scene;
