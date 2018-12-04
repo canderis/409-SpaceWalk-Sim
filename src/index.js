@@ -1,4 +1,4 @@
-import * as BABYLON from 'babylonjs';
+// import * as BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 import {
     VirtualJoystick,
@@ -8,7 +8,6 @@ import {
     HemisphericLight,
     MeshBuilder,
     Vector3,
-    Vector2,
     FlyCamera,
     StandardMaterial,
     Color3,
@@ -515,7 +514,7 @@ const createScene = () => {
         buildSkybox(scene);
         // camera.rotation = camera.rotation.add(new Vector3(0.01, 1, 1));
         let velocity = new Vector3(0.01, 0.02, 0.03);
-        camera.rotationQuaternion = new BABYLON.Quaternion(0, 0, 0, 0);
+        camera.rotationQuaternion = new Quaternion(0, 0, 0, 0);
 
         // Game Loop
         let ctr = 0;
