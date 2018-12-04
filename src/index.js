@@ -488,9 +488,7 @@ const createScene = () => {
     const scene = new Scene(engine);
     VirtualJoystick.canvas = canvas;
  
-    BABYLON.SceneLoader.Append("",SpaceBase, scene, function (scene)
-    {
-    });
+    BABYLON.SceneLoader.Append("",SpaceBase, scene, function (scene){});
 
     //This is just the box that is centered at the base for the math to work
     const spaceShip = MeshBuilder.CreateBox("spaceShip", { height: 0, width: 0, depth: 0 }, scene);
@@ -622,13 +620,13 @@ const createScene = () => {
                 let xThresh = resQ.x - targetQ.x;
                 console.log(xThresh);
                 if( xThresh > .03){
-                    if(rotationVelocity._pitchfactor > -.1*xThresh){
+                    if(rotationVelocity._pitchfactor > -0.01*xThresh){
                         rotationVelocity._pitchfactor-=0.0001;
                         accelerate= false;
                     }
                 }
                 else if(xThresh < -.03){
-                    if(rotationVelocity._pitchfactor < -.1*xThresh){
+                    if(rotationVelocity._pitchfactor < -0.01*xThresh){
                         rotationVelocity._pitchfactor+=0.0001;
                         accelerate= false;
                     }
@@ -637,13 +635,13 @@ const createScene = () => {
                 let yThresh = resQ.y - targetQ.y;
                 console.log(xThresh);
                 if(yThresh > .03 ){
-                    if(rotationVelocity._yawfactor > -.1*yThresh){
+                    if(rotationVelocity._yawfactor > -0.01*yThresh){
                         rotationVelocity._yawfactor-=0.0001;
                         accelerate= false;
                     }
                 }
                 else if(yThresh < -.03 ){
-                    if(rotationVelocity._yawfactor < -.1*yThresh){
+                    if(rotationVelocity._yawfactor < -0.01*yThresh){
                         rotationVelocity._yawfactor+=0.0001;
                         accelerate= false;
                     }
