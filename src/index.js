@@ -57,7 +57,7 @@ const buildSkybox = (scene) => {
     skybox.material = skyboxMaterial;
 }
 
-const buildGUI = (scene, guiVars, camera, spaceShip) => {
+const buildGUI = (scene, guiVars) => {
     const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
     const handControl = new GUI.Image("hand-module", HandControl);
     handControl.height = "300px";
@@ -484,23 +484,21 @@ const buildGUI = (scene, guiVars, camera, spaceShip) => {
     return joystick;
 }
 
+VirtualJoystick.canvas = canvas;
+
+
 const createScene = () => {
     const scene = new Scene(engine);
-    VirtualJoystick.canvas = canvas;
- 
-    BABYLON.SceneLoader.Append("",SpaceBase, scene, function (scene){});
-
-    //This is just the box that is centered at the base for the math to work
-    const spaceShip = MeshBuilder.CreateBox("spaceShip", { height: 0, width: 0, depth: 0 }, scene);
-    spaceShip.position.x = 0;
-    spaceShip.position.y = 0;
-    spaceShip.position.x = 0;
-
     const camera = new FlyCamera("FlyCamera", new Vector3(200, 150, -100), scene);
     camera.noRotationConstraint = true;
     camera.updateUpVectorFromRotation = true;
     camera.checkCollisions = true;
 
+
+ 
+BABYLON.SceneLoader.Append("",SpaceBase, scene, function (scene){
+
+    //This is just the box that is centered at the base for the math to work
     var sunlight = new HemisphericLight("sunlight", new Vector3(-1, -10, -4), scene);
     sunlight.groundColor = new BABYLON.Color3(0.1, 0.15, 0.25);
 
@@ -515,7 +513,7 @@ const createScene = () => {
         axes: new Vector3(0, 0, 0)
     };
 
-    const joystick = buildGUI(scene, guiVars, camera, spaceShip);
+    const joystick = buildGUI(scene, guiVars);
     buildSkybox(scene);
     // camera.rotation = camera.rotation.add(new Vector3(0.01, 1, 1));
     let velocity = new Vector3(0.01, 0.02, 0.03);
@@ -526,11 +524,11 @@ const createScene = () => {
     let oxyCtr = 0;
     const withinRange = (x, min, max) => x >= min && x <= max;
     let rotationVelocity = {
-        _yaw: 0.001,
-        _pitch: 0.001,
-        _roll: 0.001,
-        _yawfactor: 0.00,
-        _pitchfactor: 0.001,
+        _yaw: 0.000,
+        _pitch: 0.000,
+        _roll: 0.000,
+        _yawfactor: -0.00020,
+        _pitchfactor: 0.00005,
         _rollfactor: 0.00,
 
         get yaw() {return this._yaw+=this._yawfactor},
@@ -541,10 +539,16 @@ const createScene = () => {
             this._yawfactor+= -1 * vector.y;
         }
     };
-    scene.onBeforeRenderObservable.add(() => {        
-        if (withinRange(camera.position.x, spaceShip.position.x - 70, spaceShip.position.x + 70) &&
-            withinRange(camera.position.y, spaceShip.position.y - 70, spaceShip.position.y + 70) &&
-            withinRange(camera.position.z, spaceShip.position.z - 70, spaceShip.position.z + 70)) {
+
+    let iss = scene.meshes[0];
+    iss.position = new Vector3(100, 100, 300);
+    scene.onBeforeRenderObservable.add(() => {    
+        iss.rotate(new Vector3(0.1, 0.1, 0), 0.0005 );
+        iss.position.add(iss.position.scale(0.004,0.001,0))
+
+        if (withinRange(camera.position.x, iss.position.x - 70, iss.position.x + 70) &&
+            withinRange(camera.position.y, iss.position.y - 70, iss.position.y + 70) &&
+            withinRange(camera.position.z, iss.position.z - 70, iss.position.z + 70)) {
 
             guiVars.win.isVisible = true;
             return;
@@ -580,19 +584,19 @@ const createScene = () => {
                 acceleration = acceleration + .0001;
             }
             else {                
-                camera.position.x < spaceShip.position.x ? camera.position.x += 0.05 : camera.position.x -= 0.05;
-                camera.position.y < spaceShip.position.y ? camera.position.y += 0.05 : camera.position.y -= 0.05;
-                camera.position.z < spaceShip.position.z ? camera.position.z += 0.05 : camera.position.z -= 0.05;
+                camera.position.x < iss.position.x ? camera.position.x += 0.05 : camera.position.x -= 0.05;
+                camera.position.y < iss.position.y ? camera.position.y += 0.05 : camera.position.y -= 0.05;
+                camera.position.z < iss.position.z ? camera.position.z += 0.05 : camera.position.z -= 0.05;
 
                 let matrix = Matrix.Zero();
                 let target = new Vector3(0, 0, 0);
 
-                Matrix.LookAtLHToRef(camera.position, spaceShip.position, Vector3.Up(), matrix);
+                Matrix.LookAtLHToRef(camera.position, iss.position, Vector3.Up(), matrix);
                 matrix.invert();
 
                 target.x = Math.atan(matrix.m[6] / matrix.m[10]);
 
-                var vDir = spaceShip.position.subtract(camera.position);
+                var vDir = iss.position.subtract(camera.position);
 
                 if (vDir.x >= 0.0) {
                     target.y = (-Math.atan(vDir.z / vDir.x) + Math.PI / 2.0);
@@ -685,6 +689,8 @@ const createScene = () => {
 
 
     });
+});
+
 
     return scene;
 }
@@ -694,7 +700,7 @@ const scene = createScene();
 
 
 engine.runRenderLoop(() => {
-    scene.render();
+        scene.render();
 });
 
 window.addEventListener("resize", function () {
