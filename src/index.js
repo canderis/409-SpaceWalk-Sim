@@ -681,9 +681,9 @@ const createScene = () => {
         camera.rotationQuaternion = Quaternion.RotationYawPitchRoll(rotationVelocity.yaw, rotationVelocity.pitch, rotationVelocity.roll);
 
         guiVars.axes = camera.rotation;
-        guiVars.rollGUI.text = `roll: ${(rotationVelocity._rollfactor*1000).toFixed(2)}`;  
-        guiVars.pitchGUI.text = `pitch: ${(rotationVelocity._pitchfactor*1000).toFixed(2)}`;
-        guiVars.yawGUI.text = `yaw: ${(rotationVelocity._yawfactor*1000).toFixed(2)}`; 
+        guiVars.rollGUI.text = `Roll: ${(rotationVelocity._rollfactor*1000).toFixed(2)}`;  
+        guiVars.pitchGUI.text = `Pitch: ${(rotationVelocity._pitchfactor*1000).toFixed(2)}`;
+        guiVars.yawGUI.text = `Yaw: ${(rotationVelocity._yawfactor*1000).toFixed(2)}`; 
 
 
     });
