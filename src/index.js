@@ -620,13 +620,14 @@ const createScene = () => {
                 let accelerate= true;
 
                 let xThresh = resQ.x - targetQ.x;
-                if( xThresh > -.03){
+                console.log(xThresh);
+                if( xThresh > .03){
                     if(rotationVelocity._pitchfactor > -.1*xThresh){
                         rotationVelocity._pitchfactor-=0.0001;
                         accelerate= false;
                     }
                 }
-                else if(xThresh < .03){
+                else if(xThresh < -.03){
                     if(rotationVelocity._pitchfactor < -.1*xThresh){
                         rotationVelocity._pitchfactor+=0.0001;
                         accelerate= false;
@@ -634,13 +635,14 @@ const createScene = () => {
                 }
 
                 let yThresh = resQ.y - targetQ.y;
-                if(yThresh > - .03 ){
+                console.log(xThresh);
+                if(yThresh > .03 ){
                     if(rotationVelocity._yawfactor > -.1*yThresh){
                         rotationVelocity._yawfactor-=0.0001;
                         accelerate= false;
                     }
                 }
-                else if(yThresh < .03 ){
+                else if(yThresh < -.03 ){
                     if(rotationVelocity._yawfactor < -.1*yThresh){
                         rotationVelocity._yawfactor+=0.0001;
                         accelerate= false;
