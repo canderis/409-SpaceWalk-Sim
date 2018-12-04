@@ -26,7 +26,7 @@ import FuelWarning from './assets/FuelWarning.png';
 import OxygenWarning from './assets/OxygenWarning.png';
 import NoFuel from './assets/NoFuel.png';
 
-import SpaceBase from './assets/HomeBase_V2.babylon';
+import SpaceBase from './assets/HomeBase_V3.babylon';
 
 import bk1 from './assets/cwd_px.jpg';
 import bk2 from './assets/cwd_py.jpg';
