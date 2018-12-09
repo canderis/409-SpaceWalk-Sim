@@ -33,11 +33,8 @@ import bk3 from './assets/cwd_pz.jpg';
 import bk4 from './assets/cwd_nx.jpg';
 import bk5 from './assets/cwd_ny.jpg';
 import bk6 from './assets/cwd_nz.jpg';
-import FuturisticArmour from './assets/FuturisticArmour.otf';
 import Success from './assets/Success.png';
 import Failure from './assets/Failure.png';
-
-document.body.style.src = `url(${FuturisticArmour}) format("opentype")`;
 
 const canvas = document.getElementById("canvas");
 const engine = new Engine(canvas, true);
@@ -46,7 +43,7 @@ canvas.width = canvas.getBoundingClientRect().width;
 canvas.height = canvas.getBoundingClientRect().height;
 
 const buildSkybox = (scene) => {
-    const skybox = MeshBuilder.CreateBox("skyBox", { size: 8192.0 }, scene);
+    const skybox = MeshBuilder.CreateBox("skyBox", { size:16384.0 }, scene);
     const skyboxMaterial = new StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new CubeTexture("assets/cwd", scene, null, null, [bk1, bk2, bk3, bk4, bk5, bk6]);
@@ -114,11 +111,15 @@ const buildGUI = (scene, guiVars) => {
     advancedTexture.addControl(oxygenWarning);
 
     const powerText = new GUI.TextBlock();
-    powerText.text = "Power On System";
-    powerText.left = "40px";
-    powerText.top = "-230px";
+    powerText.text = "P o w e r   O n   S y s t e m";
+    powerText.left = "50px";
+    powerText.top = "-260px";
     powerText.marginLeft = "5px";
-    powerText.fontFamily = "FuturisticArmour";
+    powerText.fontFamily = "Orbitron";
+    powerText.fontSize = '15px';
+
+    // powerText.style = {"letter-spacing": "3px"};
+
 
     powerText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     powerText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
@@ -128,29 +129,36 @@ const buildGUI = (scene, guiVars) => {
 
 
     const homeText = new GUI.TextBlock();
-    homeText.text = "Return to Home";
+    homeText.text = "R e t u r n   t o   H o m e";
     // powerText.width = "180px";
-    homeText.left = "40px";
-    homeText.top = "-200px";
+    homeText.left = "50px";
+    homeText.top = "-230px";
     homeText.marginLeft = "5px";
+    homeText.fontSize = '15px';
+
 
     homeText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     homeText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     homeText.color = "white";
-    homeText.fontFamily = "FuturisticArmour";
+    homeText.fontFamily = "Orbitron";
+    // homeText.style = {"letter-spacing": "3px"};
     advancedTexture.addControl(homeText);
 
     const throttleText = new GUI.TextBlock();
-    throttleText.text = "Throttle";
+    throttleText.text = "T h r o t t l e";
     // powerText.width = "180px";
-    throttleText.left = "10px";
-    throttleText.top = "-140px";
+    throttleText.left = "15px";
+    throttleText.top = "-180px";
     throttleText.marginLeft = "5px";
+    throttleText.fontSize = '15px';
+
 
     throttleText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     throttleText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     throttleText.color = "white";
-    throttleText.fontFamily = "FuturisticArmour";
+    throttleText.fontFamily = "Orbitron";
+
+
     advancedTexture.addControl(throttleText);
 
 
@@ -162,6 +170,8 @@ const buildGUI = (scene, guiVars) => {
     fuel.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
     fuel.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     fuel.color = "white";
+    fuel.fontFamily = "Exo";
+    fuel.fontSize = "12px";
     advancedTexture.addControl(fuel);
 
 
@@ -174,6 +184,8 @@ const buildGUI = (scene, guiVars) => {
     oxygen.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     oxygen.color = "white";
     oxygenWarning.isVisible = false;
+    oxygen.fontFamily = "Exo";
+    oxygen.fontSize = "12px";
     advancedTexture.addControl(oxygen);
 
     // fuel.fontFamily="FuturisticArmour";
@@ -186,6 +198,8 @@ const buildGUI = (scene, guiVars) => {
     roll.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
     roll.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     roll.color = "white";
+    roll.fontSize = "12px";
+    roll.fontFamily = "Exo";
     advancedTexture.addControl(roll);
 
     const pitch = new GUI.TextBlock();
@@ -196,6 +210,8 @@ const buildGUI = (scene, guiVars) => {
     pitch.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
     pitch.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     pitch.color = "white";
+    pitch.fontFamily = "Exo";
+    pitch.fontSize = "12px";
     advancedTexture.addControl(pitch);
 
     const yaw = new GUI.TextBlock();
@@ -206,6 +222,8 @@ const buildGUI = (scene, guiVars) => {
     yaw.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
     yaw.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     yaw.color = "white";
+    yaw.fontFamily = "Exo";
+    yaw.fontSize = "12px";
     advancedTexture.addControl(yaw);
 
     const slider = new GUI.Slider();
@@ -216,8 +234,8 @@ const buildGUI = (scene, guiVars) => {
     slider.width = "150px";
     slider.color = "#003399";
     slider.background = "grey";
-    slider.left = "5px";
-    slider.top = "-110px";
+    slider.left = "15px";
+    slider.top = "-155px";
     slider.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     slider.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     slider.onValueChangedObservable.add(function (value) {
@@ -394,8 +412,8 @@ const buildGUI = (scene, guiVars) => {
     power.background = "red";
 
 
-    power.left = "10px";
-    power.top = "-230px";
+    power.left = "15px";
+    power.top = "-260px";
     power.height = "20px";
     power.width = "20px";
     power.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -468,8 +486,8 @@ const buildGUI = (scene, guiVars) => {
         }
     });
 
-    returnToHome.left = "10px";
-    returnToHome.top = "-200px";
+    returnToHome.left = "15px";
+    returnToHome.top = "-230px";
     returnToHome.height = "20px";
     returnToHome.width = "20px";
     returnToHome.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -540,6 +558,7 @@ const createScene = () => {
         let iss = scene.meshes[0];
         iss.position = new Vector3(100, 100, 300);
         scene.onBeforeRenderObservable.add(() => {    
+
             iss.rotate(new Vector3(0, 0.1, 0.1), 0.0005 );
             iss.position.add(iss.position.scale(0.004,0.001,0))
 
